@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTopRatedMovies } from "../apis/movies";
+import { getMoviesCategory } from "../apis/movies";
 import MovieGrid from "../components/MovieGrid";
 
 const TopRatedPage = () => {
@@ -8,7 +8,7 @@ const TopRatedPage = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await getTopRatedMovies();
+        const response = await getMoviesCategory("top_rated");
         setMovies(response.data.results);
       } catch (error) {
         console.error("오류 발생:", error);
