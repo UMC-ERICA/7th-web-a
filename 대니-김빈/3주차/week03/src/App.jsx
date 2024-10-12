@@ -3,7 +3,10 @@ import './App.css';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import HomePage from "./pages/home";
 import SearchPage from "./pages/search";
-import MoviesPage from "./pages/moviepage";
+import MoviesNowPlayingPage from "./pages/movies/now_playing";
+import MoviesPopularPage from "./pages/movies/popular";
+import MoviesTopRatedPage from "./pages/movies/top_rated";
+import MoviesUpComingPage from "./pages/movies/up_coming";
 import MovieCategoryPage from "./pages/moviecategory";
 import LoginPage from "./pages/login";
 import SignUpPage from "./pages/signup";
@@ -26,7 +29,7 @@ const router = createBrowserRouter([
           },
           {
               // 3. 부모의 path가 '/'이니, /를 붙이지 않아도 /movies랑 동일하게 동작한다.
-              path: 'movies',
+              path: 'moviecategory',
               element: <MovieCategoryPage/>
           },
           {
@@ -40,7 +43,23 @@ const router = createBrowserRouter([
       {
         path: 'search',
         element: <SearchPage/>
-      }
+      },
+      {
+        path: 'movies/now_playing.jsx',
+        element: <MoviesNowPlayingPage/>
+      },
+      {
+        path: 'movies/popular.jsx',
+        element: <MoviesPopularPage/>
+      },
+      {
+        path: 'movies/top_rated.jsx',
+        element: <MoviesTopRatedPage/>
+      },
+      {
+        path: 'movies/up_coming.jsx',
+        element: <MoviesUpComingPage/>
+      },
       ]
   },
 

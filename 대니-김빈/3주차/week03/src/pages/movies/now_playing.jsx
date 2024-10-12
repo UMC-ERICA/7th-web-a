@@ -1,11 +1,12 @@
 import {useEffect, useState} from "react";
-import axios from "axios";
 import styled from 'styled-components';
+import axios from "axios";
+
 
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
+  width: 2000px;
 `;
 
 const MoviesContainer = styled.div`
@@ -13,7 +14,7 @@ const MoviesContainer = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     max-width: 100%;
-    gap: 60px;
+    gap: 30px;
     padding: 10px;
 `;
 
@@ -35,15 +36,15 @@ const MovieImage = styled.img`
     }
 `;
 
-const MoviesPage = () => {
+const MoviesNowPlayingPage = () => {
     const [movies, setMovies] = useState([])
 
     useEffect(() => {
         const getMovies = async () => {
             try {
-                const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`, {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', {
                     headers: {
-                        Authorization: `Bearer 33629fc19f345be41465adcadcc51b6d`,
+                        Authorization: `Bearer {process.env.REACT_APP_API_KEY}`,
                     }
                 })
                 setMovies(response.data.results);
@@ -69,4 +70,4 @@ const MoviesPage = () => {
     )
 };
 
-export default MoviesPage;
+export default MoviesNowPlayingPage;
