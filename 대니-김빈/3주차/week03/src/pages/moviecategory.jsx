@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import image1 from '../assets/nature01.jpg';
+import image2 from '../assets/nature02.jpg';
+import image3 from '../assets/nature03.jpg';
+import image4 from '../assets/nature04.jpg';
 
 
 const PageWrapper = styled.div`
@@ -26,12 +30,6 @@ const ImageText = styled.p`
   font-size: 20px;
 `;
 
-const imagePath1 = `/nature01.jpg`;
-const imagePath2 = `./nature02.jpg`;
-const imagePath3 = `./nature03.jpg`;
-const imagePath4 = `./nature04.jpg`;
-
-
 const MovieCategoryPage = () => {
     return (
         <PageWrapper>
@@ -39,25 +37,25 @@ const MovieCategoryPage = () => {
             <ImageWrapper>
                 <ImageContainer>
                     <Link to="../movies/now_playing.jsx">
-                        <img src={imagePath1} alt="이미지 설명" height = '300px' />
+                        <img src={image1} alt="이미지 설명" height = '300px' />
                     </Link>
                     <ImageText>현재 상영 중인</ImageText>
                 </ImageContainer>
                 <ImageContainer>
                 <Link to="../movies/popular.jsx">
-                        <img src={imagePath2} alt="이미지 설명" height = '300px' />
+                        <img src={image2} alt="이미지 설명" height = '300px' />
                     </Link>
                     <ImageText>인기 있는</ImageText>
                 </ImageContainer>
                 <ImageContainer>
                 <Link to="../movies/top_rated.jsx">
-                        <img src={imagePath3} alt="이미지 설명" height = '300px' />
+                        <img src={image3} alt="이미지 설명" height = '300px' />
                     </Link>
                     <ImageText>높은 평가를 받은</ImageText>
                 </ImageContainer>
                 <ImageContainer>
                 <Link to="../movies/up_coming.jsx">
-                        <img src={imagePath4} alt="이미지 설명" height = '300px' />
+                        <img src={image4} alt="이미지 설명" height = '300px' />
                     </Link>
                     <ImageText>개봉 예정중인</ImageText>
                 </ImageContainer>

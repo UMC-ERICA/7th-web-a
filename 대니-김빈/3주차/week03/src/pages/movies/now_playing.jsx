@@ -42,7 +42,7 @@ const MoviesNowPlayingPage = () => {
     useEffect(() => {
         const getMovies = async () => {
             try {
-                const response = await axios.get('https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1', {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1', {
                     headers: {
                         Authorization: `Bearer {process.env.REACT_APP_API_KEY}`,
                     }

@@ -35,13 +35,13 @@ const MovieImage = styled.img`
     }
 `;
 
-const MoviesNowPlayingPage = () => {
+const MoviesUpComingPage = () => {
     const [movies, setMovies] = useState([])
 
     useEffect(() => {
         const getMovies = async () => {
             try {
-                const response = await axios.get('https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1', {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/upcoming?language=ko-KR&page=1', {
                     headers: {
                         Authorization: `Bearer {process.env.REACT_APP_API_KEY}`,
                     }
@@ -69,4 +69,4 @@ const MoviesNowPlayingPage = () => {
     )
 };
 
-export default MoviesNowPlayingPage;
+export default MoviesUpComingPage;
