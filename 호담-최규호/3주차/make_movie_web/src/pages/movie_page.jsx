@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import Movie1 from "../img/movie1.jpg";
-import Movie2 from "../img/movie2.jpg";
-import Movie3 from "../img/movie3.jpg";
-import Movie4 from "../img/movie4.jpg";
+import Playing from "../img/movie1.jpg";
+import Popular from "../img/movie2.jpg";
+import TopRated from "../img/movie3.jpg";
+import UpComing from "../img/movie4.jpg";
 import { Link } from "react-router-dom";
 
 const TotalPage = styled.div`
@@ -62,20 +62,20 @@ const MoviePage = () => {
                 <h3>카테고리</h3>
             </CategoryContainer>
             <PublicMovieButton>
-                <MovieLink to = "/playing">
-                    <img src = {Movie1} alt = "현재 상영중인"></img>
+                <MovieLink to = "/movie/playing">
+                    <img src = {Playing} alt = "현재 상영중인"></img>
                     <MovieText>현재 상영중인</MovieText>
                 </MovieLink>
-                <MovieLink to = "/popular">
-                    <img src = {Movie2} alt = "인기있는"></img>
+                <MovieLink to = "/movie/popular">
+                    <img src = {Popular} alt = "인기있는"></img>
                     <MovieText>인기있는</MovieText>
                 </MovieLink>
-                <MovieLink to = "/top_rated">
-                    <img src = {Movie3} alt = "높은 평가를 받은"></img>
+                <MovieLink to = "/movie/top_rated">
+                    <img src = {TopRated} alt = "높은 평가를 받은"></img>
                     <MovieText>높은 평가를 받은</MovieText>
                 </MovieLink>
-                <MovieLink to = "/up_coming">
-                    <img src = {Movie4} alt = "개봉 예정중인"></img>
+                <MovieLink to = "/movie/up_coming">
+                    <img src = {UpComing} alt = "개봉 예정중인"></img>
                     <MovieText>개봉 예정중인</MovieText>
                 </MovieLink>
             </PublicMovieButton>

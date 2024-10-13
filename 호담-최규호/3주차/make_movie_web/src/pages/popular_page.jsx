@@ -37,7 +37,7 @@ const PopularPage = () => {
             try {
                 const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1`, {
                     headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YmYxZWQ5N2IwNzQwNzVmYzRiNWJjMTU0M2MyMTgwZCIsIm5iZiI6MTcyODcyMDM4Mi4xMDY2NzksInN1YiI6IjY3MGEyYzhkYjE1ZDk3YjFhOTNiZjA0MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0m1JxORgB-K3cbhq96H3Nc4CgVRwgfHXmXbtmB3qd1A`
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YzU5N2VhY2UwYzNiMzQ0MGRmY2IwZTU2NjAzMjdkMyIsIm5iZiI6MTcyODc5MjY2MC42Nzg2NjgsInN1YiI6IjY3MGE4MDYzYmJiMWE5ZTgxYzYxODg5YiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.HnDwLNtgrIh_1RgDhoF7Lb6v5YX3QVFhqY1UeaUoy_s`
                     }
                 });
                 setMovies(response.data.results);

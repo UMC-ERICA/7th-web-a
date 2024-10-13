@@ -36,19 +36,19 @@ const router = createBrowserRouter([
         element: <MoviePage />,
       },
       {
-        path: "playing",
+        path: "movie/playing",
         element: <PlayingPage />,
       },
       {
-        path: "popular",
+        path: "movie/popular",
         element: <PopularPage />,
       },
       {
-        path: "top_rated",
+        path: "movie/top_rated",
         element: <TopRatedPage />,
       },
       {
-        path: "up_coming",
+        path: "movie/up_coming",
         element: <UpComingPage />,
       },
     ],

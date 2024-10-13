@@ -1,21 +1,21 @@
-import react from "react";
-import Navbar from "../components/navbar"
-import Sidebar from "../components/sidebar"
+import Navbar from "../components/Navbar"
+import Sidebar from "../components/Sidebar"
 import { Outlet } from "react-router-dom"
 import styled from "styled-components"
 
 const WidthAxis = styled.div`
     display: flex;
-    width: 100%;
+    width: calc(100% - 150px);
     height: 100vh;
+    margin-left: 150px;
 `
 
 const RootLayout = () => {
     return (
     <>
         <Navbar/>
-        <WidthAxis>
-            <Sidebar/>
+        <Sidebar/>
+        <WidthAxis>    
             <Outlet/>
         </WidthAxis>
     </>

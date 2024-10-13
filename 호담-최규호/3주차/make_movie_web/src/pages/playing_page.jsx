@@ -35,9 +35,9 @@ const PlayingPage = () => {
     useEffect(() => {
         const getMovies = async () => {
             try {
-                const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1`, {
+                const response = await axios.get('https://api.themoviedb.org/3/movie/now_playing?language=ko-KR&page=1', {
                     headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0YmYxZWQ5N2IwNzQwNzVmYzRiNWJjMTU0M2MyMTgwZCIsIm5iZiI6MTcyODcyMDM4Mi4xMDY2NzksInN1YiI6IjY3MGEyYzhkYjE1ZDk3YjFhOTNiZjA0MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.0m1JxORgB-K3cbhq96H3Nc4CgVRwgfHXmXbtmB3qd1A`
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YzU5N2VhY2UwYzNiMzQ0MGRmY2IwZTU2NjAzMjdkMyIsIm5iZiI6MTcyODc5Mjc2MS42NDg1MSwic3ViIjoiNjcwYTgwNjNiYmIxYTllODFjNjE4ODliIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.ujuT3GNemYS9UMopwjUPE956k0AwFPIFeEbo4DgI6o0`
                     }
                 });
                 setMovies(response.data.results);

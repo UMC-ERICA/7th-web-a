@@ -3,13 +3,14 @@ import styled from "styled-components";
 import { IoSearch } from "react-icons/io5";
 import { PiFilmSlate } from "react-icons/pi";
 
-const SideBarColor = styled.div`
+const SideBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: #333;
   color: white;
   width: 150px;
   height: 100%;
+  position: fixed;
 `
 
 const Button = styled.button`
@@ -48,7 +49,7 @@ const FilmSlate = styled(Link)`
 
 const Sidebar = () => {
     return (
-        <SideBarColor>
+        <SideBarContainer>
             <Button>
                 <Search to = "/search">
                     <IoSearch />
@@ -61,7 +62,7 @@ const Sidebar = () => {
                     영화
                 </FilmSlate>
             </Button>
-        </SideBarColor>
+        </SideBarContainer>
     );
 };
   
