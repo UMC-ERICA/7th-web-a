@@ -1,22 +1,12 @@
-import { useEffect, useState } from "react";
-import { getMoviesCategory } from "../apis/movies";
 import MovieGrid from "../components/MovieGrid";
+import useCustomFetch from "../hooks/useCustomFetch";
 
 const PopularPage = () => {
-  const [movies, setMovies] = useState([]);
-
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await getMoviesCategory("popular");
-        setMovies(response.data.results);
-      } catch (error) {
-        console.error("오류 발생:", error);
-      }
-    };
-
-    fetchMovies();
-  }, []);
+  const {
+    data: movies,
+    isLoading,
+    isError,
+  } = useCustomFetch(`/movie/popular?language=ko-KR&page=1`);
 
   return <MovieGrid movies={movies} />;
 };
