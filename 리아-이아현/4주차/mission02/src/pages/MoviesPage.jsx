@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import movie1 from "../assets/movie1.jpg";
 import movie2 from "../assets/movie2.jpg";
@@ -21,7 +21,7 @@ const CategoryList = styled.div`
   margin-top: 20px;
 `;
 
-const CategoryItem = styled(Link)`
+const CategoryItem = styled.div`
   background-color: #333;
   border-radius: 15px;
   width: 100%;
@@ -55,23 +55,29 @@ const CategoryText = styled.div`
 `;
 
 const MoviesPage = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <MoviesContainer>
       <h3>카테고리</h3>
       <CategoryList>
-        <CategoryItem to="/movies/now-playing">
+        <CategoryItem onClick={() => handleNavigation("/movies/now-playing")}>
           <CategoryImage src={movie1} alt="현재 상영중인" />
           <CategoryText>현재 상영중인</CategoryText>
         </CategoryItem>
-        <CategoryItem to="/movies/popular">
+        <CategoryItem onClick={() => handleNavigation("/movies/popular")}>
           <CategoryImage src={movie2} alt="인기있는" />
           <CategoryText>인기있는</CategoryText>
         </CategoryItem>
-        <CategoryItem to="/movies/top-rated">
+        <CategoryItem onClick={() => handleNavigation("/movies/top-rated")}>
           <CategoryImage src={movie3} alt="높은 평가를 받은" />
           <CategoryText>높은 평가를 받은</CategoryText>
         </CategoryItem>
-        <CategoryItem to="/movies/up-coming">
+        <CategoryItem onClick={() => handleNavigation("/movies/up-coming")}>
           <CategoryImage src={movie4} alt="개봉 예정중인" />
           <CategoryText>개봉 예정중인</CategoryText>
         </CategoryItem>
