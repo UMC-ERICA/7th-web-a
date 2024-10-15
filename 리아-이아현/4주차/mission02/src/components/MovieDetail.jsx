@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import IMG_BASE_URL from "../constants/path";
+import { useNavigate } from "react-router-dom";
 
 const MovieContainer = styled.div`
     background-color: black;
@@ -11,6 +12,7 @@ const MovieContainer = styled.div`
     text-align: center;
     filter: ${({ hovered }) =>
       hovered ? "brightness(50%)" : "brightness(100%)"};
+    cursor: pointer;
 `;
 
 const PosterImage = styled.img`
@@ -32,14 +34,20 @@ const ReleaseDate = styled.p`
   margin-bottom: 10px;
 `;
 
-export default function Movie({ poster_path, title, release_date }) {
+export default function Movie({ movieId, poster_path, title, release_date }) {
   const [hovered, setHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    navigate(`/movies/${movieId}`);
+  };
 
   return (
     <MovieContainer
       hovered={hovered ? 1 : 0}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={handleNavigation}
     >
       <PosterImage src={`${IMG_BASE_URL}${poster_path}`} alt="포스터 사진" />
       <MovieTitle>{title}</MovieTitle>

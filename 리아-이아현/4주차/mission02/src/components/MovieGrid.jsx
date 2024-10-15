@@ -18,6 +18,7 @@ const MovieGrid = ({ movies }) => {
       {movies.map((movie) => (
         <MovieDetail
           key={movie.id}
+          movieId={movie.id}
           poster_path={movie.poster_path}
           title={movie.title}
           release_date={movie.release_date}

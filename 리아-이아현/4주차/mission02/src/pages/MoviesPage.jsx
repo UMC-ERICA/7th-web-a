@@ -30,6 +30,7 @@ const CategoryItem = styled.div`
   text-decoration: none;
   color: white;
   position: relative;
+  cursor: pointer;
 
   &:hover {
     opacity: 0.8;
