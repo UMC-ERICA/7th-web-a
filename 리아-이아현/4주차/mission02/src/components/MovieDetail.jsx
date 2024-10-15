@@ -34,12 +34,27 @@ const ReleaseDate = styled.p`
   margin-bottom: 10px;
 `;
 
-export default function Movie({ movieId, poster_path, title, release_date }) {
+export default function Movie({
+  movieId,
+  poster_path,
+  title,
+  release_date,
+  vote_average,
+  overview,
+}) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
   const handleNavigation = () => {
-    navigate(`/movies/${movieId}`);
+    navigate(`/movies/${movieId}`, {
+      state: {
+        title,
+        poster_path,
+        release_date,
+        vote_average,
+        overview,
+      },
+    });
   };
 
   return (

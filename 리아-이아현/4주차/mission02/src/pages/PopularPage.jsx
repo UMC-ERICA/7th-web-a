@@ -1,12 +1,12 @@
 import MovieGrid from "../components/MovieGrid";
-import useCustomFetch from "../hooks/useCustomFetch";
+import useCustomFetchMovies from "../hooks/useCustomFetchMovies";
 
 const PopularPage = () => {
   const {
     data: movies,
     isLoading,
     isError,
-  } = useCustomFetch(`/movie/popular?language=ko-KR&page=1`);
+  } = useCustomFetchMovies(`/movie/popular?language=ko-KR&page=1`);
 
   if (isLoading && movies.length === 0) {
     return (
