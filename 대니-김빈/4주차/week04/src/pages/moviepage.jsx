@@ -1,10 +1,11 @@
+import {useEffect, useState} from "react";
+import axios from "axios";
 import styled from 'styled-components';
-import useCustomFetch from "../../hooks/useCustomFetch";
 
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
-  width: 2000px;
+  width: 100%;
 `;
 
 const MoviesContainer = styled.div`
@@ -12,7 +13,7 @@ const MoviesContainer = styled.div`
     flex-wrap: wrap;
     justify-content: center;
     max-width: 100%;
-    gap: 30px;
+    gap: 60px;
     padding: 10px;
 `;
 
@@ -34,24 +35,29 @@ const MovieImage = styled.img`
     }
 `;
 
-const MoviesUpComingPage = () => {
-    const { data:movies, isLoading, isError } = useCustomFetch('/movie/upcoming?language=ko-KR&page=1');
-    if (isLoading){
-        return <div>
-            <h1 style={{color:'white'}}>로딩 중 입니다..</h1>
-        </div>
-    }
-    
-    if (isError){
-        return <div>
-            <h1 style={{color:'white'}}>에러가 발생했습니다.</h1>
-        </div>
-    }
+const MoviesPage = () => {
+    const [movies, setMovies] = useState([])
+
+    useEffect(() => {
+        const getMovies = async () => {
+            try {
+                const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?language=en-US&page=1`, {
+                    headers: {
+                        Authorization: `Bearer 33629fc19f345be41465adcadcc51b6d`,
+                    }
+                })
+                setMovies(response.data.results);
+            } catch (error) {
+                console.error("Error fetching movies:", error);
+            }
+        }
+        getMovies();
+    }, []);
 
     return (
         <PageWrapper>
             <MoviesContainer>
-                {movies?.results?.map((movie) => (
+                {movies.map((movie) => (
                     <MoviesItem key={movie.id}>
                         <MovieImage src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} />
                         <h3>{movie.title}</h3>
@@ -60,8 +66,7 @@ const MoviesUpComingPage = () => {
                 ))}
             </MoviesContainer>
         </PageWrapper>
-    );
+    )
 };
 
-
-export default MoviesUpComingPage;
+export default MoviesPage;
