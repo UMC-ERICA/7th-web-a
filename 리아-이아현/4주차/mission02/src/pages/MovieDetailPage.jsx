@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import IMG_BASE_URL from "../constants/path";
 import useCustomFetchMovieDetail from "../hooks/useCustomFetchMovieDetail";
+import useCustomFetchMovieCredits from "../hooks/useCustomFetchMovieCredits";
 import styled from "styled-components";
 
 const MovieDetailContainer = styled.div`
@@ -16,8 +17,8 @@ const MovieDetailContainer = styled.div`
 `;
 
 const MoviePoster = styled.img`
-  width: 300px;
-  height: 350px;
+  width: 400px;
+  height: 80%;
   border-radius: 15px;
   object-fit: cover;
   margin: 0 20px;
@@ -30,7 +31,7 @@ const MovieInfoContainer = styled.div`
 `;
 
 const MovieTitle = styled.h1`
-  font-size: 30px;
+  font-size: 35px;
   margin-bottom: 20px;
 `;
 
@@ -51,19 +52,56 @@ const MovieTagline = styled.div`
 
 const MovieOverview = styled.div`
   font-size: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+`;
+
+const CreditsContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 20px;
+  margin: 20px 0;
+`;
+
+const CastList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+`;
+
+const CastItem = styled.div`
+  width: 100px;
+  text-align: center;
+`;
+
+const CastImage = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const CastName = styled.p`
+  font-size: 15px;
+  margin-top: 10px;
+  color: white;
 `;
 
 const MovieDetailPage = () => {
   const { movieId } = useParams();
-
   const {
     data: movieDetails,
-    isLoading,
-    isError,
+    isLoading: isDetailLoading,
+    isError: isDetailError,
   } = useCustomFetchMovieDetail(`/movie/${movieId}?language=ko-KR`);
+  const {
+    credits,
+    isLoading: isCreditsLoading,
+    isError: isCreditsError,
+  } = useCustomFetchMovieCredits(`/movie/${movieId}/credits?language=ko-KR`);
 
-  if (isLoading) {
+  if (isDetailLoading || isCreditsLoading) {
     return (
       <div style={{ backgroundColor: "black" }}>
         <h1 style={{ color: "white" }}>로딩 중 입니다...</h1>
@@ -71,7 +109,7 @@ const MovieDetailPage = () => {
     );
   }
 
-  if (isError) {
+  if (isDetailError || isCreditsError) {
     return (
       <div>
         <h1 style={{ color: "white" }}>에러 입니다...</h1>
@@ -79,7 +117,7 @@ const MovieDetailPage = () => {
     );
   }
 
-  if (!movieDetails) {
+  if (!movieDetails || !credits) {
     return <h1 style={{ color: "white" }}>영화 정보를 불러올 수 없습니다.</h1>;
   }
 
@@ -92,6 +130,8 @@ const MovieDetailPage = () => {
     runtime,
     tagline,
   } = movieDetails;
+  const { cast, crew } = credits;
+  const directors = crew.filter((member) => member.job === "Director");
 
   return (
     <MovieDetailContainer>
@@ -103,6 +143,30 @@ const MovieDetailPage = () => {
         <MovieInfo>상영 시간: {runtime}분</MovieInfo>
         <MovieTagline>{tagline}</MovieTagline>
         <MovieOverview>{overview}</MovieOverview>
+
+        <CreditsContainer>
+          <SectionTitle>감독</SectionTitle>
+          {directors.map((director) => (
+            <p key={director.id}>{director.name}</p>
+          ))}
+          <SectionTitle>출연진</SectionTitle>
+          <CastList>
+            {cast.slice(0, 10).map((actor) => (
+              <CastItem key={actor.cast_id}>
+                <CastImage
+                  src={
+                    actor.profile_path
+                      ? `${IMG_BASE_URL}${actor.profile_path}`
+                      : "이미지가 없습니다."
+                  }
+                  alt={actor.name}
+                />
+                <CastName>{actor.name}</CastName>
+                <p style={{ color: "#ccc" }}>{actor.character}</p>
+              </CastItem>
+            ))}
+          </CastList>
+        </CreditsContainer>
       </MovieInfoContainer>
     </MovieDetailContainer>
   );
