@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import useCustomFetch from "../../hooks/useCustomFetch";
+import { useNavigate } from 'react-router-dom';
+
 
 const PageWrapper = styled.div`
   display: flex;
@@ -34,8 +36,15 @@ const MovieImage = styled.img`
     }
 `;
 
-const MoviesUpComingPage = () => {
-    const { data:movies, isLoading, isError } = useCustomFetch('/movie/upcoming?language=ko-KR&page=1');
+const MoivesPopularPage = () => {
+    const { data, isLoading, isError } = useCustomFetch('/movie/popular?language=ko-KR&page=1');
+    const navigate = useNavigate();
+
+    const handleMovieClick = (movieId) => {
+        navigate(`/movies/${movieId}`);
+        console.log(movieId)
+    };
+
     if (isLoading){
         return <div>
             <h1 style={{color:'white'}}>로딩 중 입니다..</h1>
@@ -51,9 +60,12 @@ const MoviesUpComingPage = () => {
     return (
         <PageWrapper>
             <MoviesContainer>
-                {movies?.results?.map((movie) => (
+                {data?.results?.map((movie) => (
                     <MoviesItem key={movie.id}>
-                        <MovieImage src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} />
+                        <MovieImage
+                            src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} 
+                            onClick={() => handleMovieClick(movie.id)}
+                            />
                         <h3>{movie.title}</h3>
                         <p>{movie.release_date}</p>
                     </MoviesItem>
@@ -64,4 +76,4 @@ const MoviesUpComingPage = () => {
 };
 
 
-export default MoviesUpComingPage;
+export default MoivesPopularPage;

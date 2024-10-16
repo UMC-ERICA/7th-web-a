@@ -1,6 +1,5 @@
-import {useEffect, useState} from "react";
-import axios from "axios";
 import styled from 'styled-components';
+import useCustomFetch from "../../hooks/useCustomFetch";
 
 const PageWrapper = styled.div`
   display: flex;
@@ -35,29 +34,25 @@ const MovieImage = styled.img`
     }
 `;
 
-const MoviesPopularPage = () => {
-    const [movies, setMovies] = useState([])
+const MoivesPopularPage = () => {
+    const { data, isLoading, isError } = useCustomFetch('/movie/popular?language=ko-KR&page=1');
 
-    useEffect(() => {
-        const getMovies = async () => {
-            try {
-                const response = await axios.get('https://api.themoviedb.org/3/movie/popular?language=ko-KR&page=1', {
-                    headers: {
-                        Authorization: `Bearer {process.env.REACT_APP_API_KEY}`,
-                    }
-                })
-                setMovies(response.data.results);
-            } catch (error) {
-                console.error("Error fetching movies:", error);
-            }
-        }
-        getMovies();
-    }, []);
+    if (isLoading){
+        return <div>
+            <h1 style={{color:'white'}}>로딩 중 입니다..</h1>
+        </div>
+    }
+    
+    if (isError){
+        return <div>
+            <h1 style={{color:'white'}}>에러가 발생했습니다.</h1>
+        </div>
+    }
 
     return (
         <PageWrapper>
             <MoviesContainer>
-                {movies.map((movie) => (
+                {data?.results?.map((movie) => (
                     <MoviesItem key={movie.id}>
                         <MovieImage src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} />
                         <h3>{movie.title}</h3>
@@ -66,7 +61,8 @@ const MoviesPopularPage = () => {
                 ))}
             </MoviesContainer>
         </PageWrapper>
-    )
+    );
 };
 
-export default MoviesPopularPage;
+
+export default MoivesPopularPage;
