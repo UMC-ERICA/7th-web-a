@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import IMG_BASE_URL from "../constants/path";
-import useCustomFetchMovieDetail from "../hooks/useCustomFetchMovieDetail";
-import useCustomFetchMovieCredits from "../hooks/useCustomFetchMovieCredits";
+import useFetchMovieDetail from "../hooks/useFetchMovieDetail";
+import useFetchMovieCredits from "../hooks/useFetchMovieCredits";
 import styled from "styled-components";
 
 const MovieDetailContainer = styled.div`
@@ -94,12 +94,12 @@ const MovieDetailPage = () => {
     data: movieDetails,
     isLoading: isDetailLoading,
     isError: isDetailError,
-  } = useCustomFetchMovieDetail(`/movie/${movieId}?language=ko-KR`);
+  } = useFetchMovieDetail(`/movie/${movieId}?language=ko-KR`);
   const {
     credits,
     isLoading: isCreditsLoading,
     isError: isCreditsError,
-  } = useCustomFetchMovieCredits(`/movie/${movieId}/credits?language=ko-KR`);
+  } = useFetchMovieCredits(`/movie/${movieId}/credits?language=ko-KR`);
 
   if (isDetailLoading || isCreditsLoading) {
     return (

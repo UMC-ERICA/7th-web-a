@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
 import instance from "../apis/instance";
 
-const useCustomFetchMovieCredits = (url) => {
-  const [credits, setCredits] = useState([]);
+const useFetchMovies = (url) => {
+  const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
-    const fetchCredits = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
         const response = await instance.get(url);
-        setCredits(response.data);
+        setData(response.data.results);
       } catch (error) {
         setIsError(true);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchCredits();
+    fetchData();
   }, [url]);
 
-  return { credits, isLoading, isError };
+  return { data, isLoading, isError };
 };
 
-export default useCustomFetchMovieCredits;
+export default useFetchMovies;

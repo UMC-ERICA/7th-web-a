@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import instance from "../apis/instance";
 
-const useCustomFetchMovieDetail = (url) => {
+const useFetchMovieDetail = (url) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -24,4 +24,4 @@ const useCustomFetchMovieDetail = (url) => {
   return { data, isLoading, isError };
 };
 
-export default useCustomFetchMovieDetail;
+export default useFetchMovieDetail;
