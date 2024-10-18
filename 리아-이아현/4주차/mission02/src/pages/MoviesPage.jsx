@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import nowplaying from "../assets/movie1.jpg";
 import popular from "../assets/movie2.jpg";
@@ -19,6 +19,11 @@ const CategoryList = styled.div`
   display: flex;
   gap: 20px;
   margin-top: 20px;
+`;
+
+const StyledLink = styled(Link)`
+  display: block;
+  width: 100%;
 `;
 
 const CategoryItem = styled.div`
@@ -56,32 +61,34 @@ const CategoryText = styled.div`
 `;
 
 const MoviesPage = () => {
-  const navigate = useNavigate();
-
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-
   return (
     <MoviesContainer>
       <h3>카테고리</h3>
       <CategoryList>
-        <CategoryItem onClick={() => handleNavigation("/movies/now-playing")}>
-          <CategoryImage src={nowplaying} alt="현재 상영중인" />
-          <CategoryText>현재 상영중인</CategoryText>
-        </CategoryItem>
-        <CategoryItem onClick={() => handleNavigation("/movies/popular")}>
-          <CategoryImage src={popular} alt="인기있는" />
-          <CategoryText>인기있는</CategoryText>
-        </CategoryItem>
-        <CategoryItem onClick={() => handleNavigation("/movies/top-rated")}>
-          <CategoryImage src={toprated} alt="높은 평가를 받은" />
-          <CategoryText>높은 평가를 받은</CategoryText>
-        </CategoryItem>
-        <CategoryItem onClick={() => handleNavigation("/movies/up-coming")}>
-          <CategoryImage src={upcoming} alt="개봉 예정중인" />
-          <CategoryText>개봉 예정중인</CategoryText>
-        </CategoryItem>
+        <StyledLink to="/movies/now-playing">
+          <CategoryItem>
+            <CategoryImage src={nowplaying} alt="현재 상영중인" />
+            <CategoryText>현재 상영중인</CategoryText>
+          </CategoryItem>
+        </StyledLink>
+        <StyledLink to="/movies/popular">
+          <CategoryItem>
+            <CategoryImage src={popular} alt="인기있는" />
+            <CategoryText>인기있는</CategoryText>
+          </CategoryItem>
+        </StyledLink>
+        <StyledLink to="/movies/top-rated">
+          <CategoryItem>
+            <CategoryImage src={toprated} alt="높은 평가를 받은" />
+            <CategoryText>높은 평가를 받은</CategoryText>
+          </CategoryItem>
+        </StyledLink>
+        <StyledLink to="/movies/up-coming">
+          <CategoryItem>
+            <CategoryImage src={upcoming} alt="개봉 예정중인" />
+            <CategoryText>개봉 예정중인</CategoryText>
+          </CategoryItem>
+        </StyledLink>
       </CategoryList>
     </MoviesContainer>
   );
