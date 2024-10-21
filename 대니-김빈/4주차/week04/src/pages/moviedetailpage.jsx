@@ -6,7 +6,6 @@ const PageWrapper = styled.div`
   display: flex;
   width: 100%;
   height: 100vh;
-  padding: 10px;
 `;
 
 
@@ -61,7 +60,6 @@ const MovieText = styled.div`
   top: 0;
   left: 0;
   color: white;
-  padding: 20px;
   max-width: 60%;
   border-radius: 8px;
   overflow: hidden;
@@ -110,12 +108,12 @@ const MovieDetailPage = () => {
                   image={`https://image.tmdb.org/t/p/w1280${movieData.backdrop_path}`}
                 />
                 <MovieText>
-                  <h3 style={{paddingTop:'30px',fontSize:'30px'}}>{movieData.title}</h3>
-                  <div style={{fontSize:'24px'}}>평균 {movieData.vote_average.toFixed(1)}</div>
-                  <div style={{fontSize:'24px'}}>{movieData.release_date.split('-')[0]}</div>
-                  <div style={{fontSize:'24px'}}>{movieData.runtime}분</div>
-                  <h3 style={{fontSize:'30px'}}>{movieData.tagline}</h3>
-                  <p style={{fontSize:'18px'}}>{movieData.overview}</p>
+                  <h3 style={{marginTop:'10px',marginLeft:'10px', fontSize:'40px'}}>{movieData.title}</h3>
+                  <div style={{fontSize:'24px',marginLeft:'10px'}}>평균 {movieData.vote_average.toFixed(1)}</div>
+                  <div style={{fontSize:'24px',marginLeft:'10px'}}>{movieData.release_date.split('-')[0]}</div>
+                  <div style={{fontSize:'24px',marginLeft:'10px'}}>{movieData.runtime}분</div>
+                  <h3 style={{fontSize:'30px',marginLeft:'10px'}}>{movieData.tagline}</h3>
+                  <p style={{fontSize:'18px',marginLeft:'10px'}}>{movieData.overview}</p>
                 </MovieText>
               </MovieImageWrapper>
               <h1 style={{ color: 'white', paddingLeft: '50px' }}>감독/출연</h1>
