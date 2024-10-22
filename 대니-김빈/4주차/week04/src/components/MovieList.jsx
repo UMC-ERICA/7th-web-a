@@ -10,11 +10,11 @@ const MoviesContainer = styled.div`
     padding: 10px;
 `;
 
-const MoviesList = ({ movies, onMovieClick }) => {
+const MoviesList = ({ movies }) => {
     return (
         <MoviesContainer>
             {movies.map((movie) => (
-                <MovieItem key={movie.id} movie={movie} onClick={onMovieClick} />
+                <MovieItem key={movie.id} movie={movie} />
             ))}
         </MoviesContainer>
     );

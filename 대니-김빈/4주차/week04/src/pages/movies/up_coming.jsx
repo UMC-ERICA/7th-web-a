@@ -28,7 +28,7 @@ const MoviesUpComingPage = () => {
 
     return (
         <PageWrapper>
-            <MoviesList movies={data?.results || []} onMovieClick={handleMovieClick} />
+            <MoviesList movies={data?.results || []} />
         </PageWrapper>
     );
 };
