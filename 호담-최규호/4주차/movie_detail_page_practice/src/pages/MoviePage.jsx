@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import Playing from "../img/movie1.jpg";
-import Popular from "../img/movie2.jpg";
-import TopRated from "../img/movie3.jpg";
-import UpComing from "../img/movie4.jpg";
+import Playing from "../assets/movie1.jpg";
+import Popular from "../assets/movie2.jpg";
+import TopRated from "../assets/movie3.jpg";
+import UpComing from "../assets/movie4.jpg";
 import { Link } from "react-router-dom";
 
 const TotalPage = styled.div`

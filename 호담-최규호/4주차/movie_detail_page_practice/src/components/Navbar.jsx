@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import styled from "styled-components";
-import Logo from "../img/logo.png";
+import Logo from "../assets/logo.png";
 
 const TopBarColor = styled.div`
     display: flex;
