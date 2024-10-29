@@ -4,9 +4,9 @@ import axiosInstance from "../apis/AxiosInstance.jsx";
 import styled from "styled-components";
 
 const MovieDetailContainer = styled.div`
+    flex-direction: column;
     display: flex;
     background-color: #222;
-    padding: 20px;
     color: white;
 `;
 
@@ -70,14 +70,13 @@ const MovieDetailPage = () => {
 
     return (
         <MovieDetailContainer>
-            <MoviePoster src={`https://image.tmdb.org/t/p/w500${movieDetail.poster_path}`} alt={movieDetail.title} />
+            <MoviePoster src={`https://image.tmdb.org/t/p/w500${movieDetail.backdrop_path}`} alt={movieDetail.title} />
             <MovieInfo>
                 <h1>{movieDetail.title}</h1>
                 <p>{movieDetail.overview}</p>
                 <p>개봉일: {movieDetail.release_date}</p>
                 <p>평점: {movieDetail.vote_average}</p>
                 <p>감독: {director ? director.name : '정보 없음'}</p>
-
                 <CreditsContainer>
                     <h3>출연진</h3>
                     <ul>
