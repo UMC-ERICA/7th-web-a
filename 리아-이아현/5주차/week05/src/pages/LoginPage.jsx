@@ -1,4 +1,4 @@
-import { useState } from "react";
+import useCustomForm from "../hooks/useCustomForm";
 import styled from "styled-components";
 
 const LoginContainer = styled.div`
@@ -51,58 +51,42 @@ const LoginButton = styled.button`
 `;
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [emailError, setEmailError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [emailTouched, setEmailTouched] = useState(false);
-  const [passwordTouched, setPasswordTouched] = useState(false);
-
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setEmailError(!e.target.value.includes("@"));
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    setPasswordError(e.target.value.length < 8 || e.target.value.length > 16);
-  };
-
-  const handleEmailBlur = () => setEmailTouched(true);
-  const handlePasswordBlur = () => setPasswordTouched(true);
+  const { values, errors, touched, handleChange, handleBlur, isFormValid } =
+    useCustomForm({
+      email: "",
+      password: "",
+    });
 
   return (
     <LoginContainer>
       <Title>로그인</Title>
       <Input
         type="email"
+        name="email"
         placeholder="이메일을 입력해주세요!"
-        value={email}
-        onChange={handleEmailChange}
-        onBlur={handleEmailBlur}
-        $isError={emailError && emailTouched}
+        value={values.email}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        $isError={errors.email && touched.email}
       />
-      <ErrorMessage $isVisible={emailError && emailTouched}>
-        올바른 이메일 형식이 아닙니다. 다시 확인해주세요!
+      <ErrorMessage $isVisible={errors.email && touched.email}>
+        {errors.email}
       </ErrorMessage>
 
       <Input
         type="password"
+        name="password"
         placeholder="비밀번호를 입력해주세요!"
-        value={password}
-        onChange={handlePasswordChange}
-        onBlur={handlePasswordBlur}
-        $isError={passwordError && passwordTouched}
+        value={values.password}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        $isError={errors.password && touched.password}
       />
-      <ErrorMessage $isVisible={passwordError && passwordTouched}>
-        비밀번호는 8 ~ 16자리 사이로 입력해주세요!
+      <ErrorMessage $isVisible={errors.password && touched.password}>
+        {errors.password}
       </ErrorMessage>
 
-      <LoginButton
-        disabled={emailError || passwordError || !email || !password}
-      >
-        로그인
-      </LoginButton>
+      <LoginButton disabled={!isFormValid}>로그인</LoginButton>
     </LoginContainer>
   );
 };
