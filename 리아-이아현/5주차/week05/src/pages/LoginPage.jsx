@@ -25,11 +25,10 @@ const Input = styled.input`
   font-size: 18px;
   border: none;
   border-radius: 8px;
+  outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
 `;
 
-const ErrorMessage = styled.p.attrs((props) => ({
-  isVisible: undefined,
-}))`
+const ErrorMessage = styled.p`
   color: red;
   font-size: 14px;
   margin-top: -8px;
@@ -45,9 +44,9 @@ const LoginButton = styled.button`
   font-size: 20px;
   border: none;
   border-radius: 8px;
-  background-color: #ff285e;
+  background-color: ${({ disabled }) => (disabled ? "gray" : "#ff285e")};
   color: white;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   margin-top: 20px;
 `;
 
@@ -56,26 +55,21 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
   const handleEmailChange = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setEmailError(true);
-    } else {
-      setEmailError(false);
-    }
+    setEmail(e.target.value);
+    setEmailError(!e.target.value.includes("@"));
   };
 
   const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-    if (value.length < 8 || value.length > 16) {
-      setPasswordError(true);
-    } else {
-      setPasswordError(false);
-    }
+    setPassword(e.target.value);
+    setPasswordError(e.target.value.length < 8 || e.target.value.length > 16);
   };
+
+  const handleEmailBlur = () => setEmailTouched(true);
+  const handlePasswordBlur = () => setPasswordTouched(true);
 
   return (
     <LoginContainer>
@@ -85,8 +79,10 @@ const LoginPage = () => {
         placeholder="이메일을 입력해주세요!"
         value={email}
         onChange={handleEmailChange}
+        onBlur={handleEmailBlur}
+        $isError={emailError && emailTouched}
       />
-      <ErrorMessage $isVisible={emailError}>
+      <ErrorMessage $isVisible={emailError && emailTouched}>
         올바른 이메일 형식이 아닙니다. 다시 확인해주세요!
       </ErrorMessage>
 
@@ -95,12 +91,18 @@ const LoginPage = () => {
         placeholder="비밀번호를 입력해주세요!"
         value={password}
         onChange={handlePasswordChange}
+        onBlur={handlePasswordBlur}
+        $isError={passwordError && passwordTouched}
       />
-      <ErrorMessage $isVisible={passwordError}>
+      <ErrorMessage $isVisible={passwordError && passwordTouched}>
         비밀번호는 8 ~ 16자리 사이로 입력해주세요!
       </ErrorMessage>
 
-      <LoginButton>로그인</LoginButton>
+      <LoginButton
+        disabled={emailError || passwordError || !email || !password}
+      >
+        로그인
+      </LoginButton>
     </LoginContainer>
   );
 };
