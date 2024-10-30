@@ -1,4 +1,6 @@
-import useCustomForm from "../hooks/useCustomForm";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import styled from "styled-components";
 
 const LoginContainer = styled.div`
@@ -50,43 +52,60 @@ const LoginButton = styled.button`
   margin-top: 20px;
 `;
 
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email("유효한 이메일 형식이 아닙니다.")
+    .required("이메일을 반드시 입력해주세요."),
+  password: yup
+    .string()
+    .min(8, "비밀번호는 8자 이상이어야 합니다.")
+    .max(16, "비밀번호는 16자 이하여야 합니다.")
+    .required("비밀번호를 입력해주세요."),
+});
+
 const LoginPage = () => {
-  const { values, errors, touched, handleChange, handleBlur, isFormValid } =
-    useCustomForm({
-      email: "",
-      password: "",
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, touchedFields },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onBlur",
+  });
+
+  const onSubmit = (data) => {
+    console.log("로그인 데이터:", data);
+  };
 
   return (
     <LoginContainer>
       <Title>로그인</Title>
-      <Input
-        type="email"
-        name="email"
-        placeholder="이메일을 입력해주세요!"
-        value={values.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        $isError={errors.email && touched.email}
-      />
-      <ErrorMessage $isVisible={errors.email && touched.email}>
-        {errors.email}
-      </ErrorMessage>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          type="email"
+          placeholder="이메일을 입력해주세요!"
+          {...register("email")}
+          $isError={errors.email && touchedFields.email}
+        />
+        <ErrorMessage $isVisible={errors.email && touchedFields.email}>
+          {errors.email?.message}
+        </ErrorMessage>
 
-      <Input
-        type="password"
-        name="password"
-        placeholder="비밀번호를 입력해주세요!"
-        value={values.password}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        $isError={errors.password && touched.password}
-      />
-      <ErrorMessage $isVisible={errors.password && touched.password}>
-        {errors.password}
-      </ErrorMessage>
+        <Input
+          type="password"
+          placeholder="비밀번호를 입력해주세요!"
+          {...register("password")}
+          $isError={errors.password && touchedFields.password}
+        />
+        <ErrorMessage $isVisible={errors.password && touchedFields.password}>
+          {errors.password?.message}
+        </ErrorMessage>
 
-      <LoginButton disabled={!isFormValid}>로그인</LoginButton>
+        <LoginButton type="submit" disabled={!isValid}>
+          로그인
+        </LoginButton>
+      </form>
     </LoginContainer>
   );
 };
