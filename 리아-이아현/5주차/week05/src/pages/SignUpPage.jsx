@@ -34,6 +34,25 @@ const ErrorMessage = styled.p`
   text-align: left;
 `;
 
+const GenderSelect = styled.select`
+  width: 470px;
+  height: 40px;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  color: gray;
+  outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
+  &:hover {
+    outline: ${({ disabled }) => (disabled ? "gray" : "2px solid #2a4cd4")};
+  }
+  &:focus {
+    border: 2px solid #2a4cd4;
+    color: black;
+  }
+`;
+
 const schema = yup.object().shape({
   email: yup
     .string()
@@ -48,6 +67,10 @@ const schema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), null], "비밀번호가 일치하지 않습니다.")
     .required("비밀번호 검증 또한 필수 입력요소입니다."),
+  gender: yup
+    .string()
+    .oneOf(["male", "female"], "올바른 성별을 선택해주세요.")
+    .required("성별을 선택해주세요."),
 });
 
 const SignUpPage = () => {
@@ -97,6 +120,13 @@ const SignUpPage = () => {
         {errors.checkPassword && touchedFields.checkPassword && (
           <ErrorMessage>{errors.checkPassword.message}</ErrorMessage>
         )}
+
+        <GenderSelect {...register("gender")}>
+          <option value="">성별을 선택해주세요!</option>
+          <option value="male">남성</option>
+          <option value="female">여성</option>
+        </GenderSelect>
+        {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
 
         <Button type="submit" disabled={!isValid}>
           제출
