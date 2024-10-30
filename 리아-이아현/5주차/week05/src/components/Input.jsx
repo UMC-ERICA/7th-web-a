@@ -10,6 +10,9 @@ const StyledInput = styled.input`
   border: none;
   border-radius: 8px;
   outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
+  &:hover {
+    outline: ${({ disabled }) => (disabled ? "gray" : "2px solid #2a4cd4")};
+  }
 `;
 
 const Input = React.forwardRef(({ $isError, ...props }, ref) => (

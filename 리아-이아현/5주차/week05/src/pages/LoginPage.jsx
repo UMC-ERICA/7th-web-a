@@ -24,13 +24,12 @@ const Title = styled.h1`
 const LoginForm = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
 `;
 
 const ErrorMessage = styled.p`
   color: red;
   font-size: 14px;
-  margin-top: -8px;
+  margin-top: -5px;
   margin-bottom: 10px;
   text-align: left;
 `;
