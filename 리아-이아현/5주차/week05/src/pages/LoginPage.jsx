@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import styled from "styled-components";
+import Input from "../components/Input";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -19,24 +20,10 @@ const Title = styled.h1`
   margin-bottom: 50px;
 `;
 
-const Input = styled.input`
-  width: 450px;
-  height: 30px;
-  padding: 10px;
-  margin: 10px 0;
-  font-size: 18px;
-  border: none;
-  border-radius: 8px;
-  outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
-`;
-
-const ErrorMessage = styled.p`
-  color: red;
-  font-size: 14px;
-  margin-top: -8px;
-  margin-bottom: 10px;
-  text-align: left;
-  visibility: ${({ $isVisible }) => ($isVisible ? "visible" : "hidden")};
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const LoginButton = styled.button`
@@ -50,6 +37,14 @@ const LoginButton = styled.button`
   color: white;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   margin-top: 20px;
+`;
+
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 14px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+  text-align: left;
 `;
 
 const schema = yup.object().shape({
@@ -81,16 +76,16 @@ const LoginPage = () => {
   return (
     <LoginContainer>
       <Title>로그인</Title>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <LoginForm onSubmit={handleSubmit(onSubmit)}>
         <Input
           type="email"
           placeholder="이메일을 입력해주세요!"
           {...register("email")}
           $isError={errors.email && touchedFields.email}
         />
-        <ErrorMessage $isVisible={errors.email && touchedFields.email}>
-          {errors.email?.message}
-        </ErrorMessage>
+        {errors.email && touchedFields.email && (
+          <ErrorMessage>{errors.email.message}</ErrorMessage>
+        )}
 
         <Input
           type="password"
@@ -98,14 +93,14 @@ const LoginPage = () => {
           {...register("password")}
           $isError={errors.password && touchedFields.password}
         />
-        <ErrorMessage $isVisible={errors.password && touchedFields.password}>
-          {errors.password?.message}
-        </ErrorMessage>
+        {errors.password && touchedFields.password && (
+          <ErrorMessage>{errors.password.message}</ErrorMessage>
+        )}
 
         <LoginButton type="submit" disabled={!isValid}>
           로그인
         </LoginButton>
-      </form>
+      </LoginForm>
     </LoginContainer>
   );
 };
