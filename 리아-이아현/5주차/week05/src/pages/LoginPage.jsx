@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import styled from "styled-components";
 import Input from "../components/Input";
+import Button from "../components/Button";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -24,19 +25,6 @@ const LoginForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const LoginButton = styled.button`
-  width: 470px;
-  height: 60px;
-  padding: 10px;
-  font-size: 20px;
-  border: none;
-  border-radius: 8px;
-  background-color: ${({ disabled }) => (disabled ? "gray" : "#ff285e")};
-  color: white;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-  margin-top: 20px;
 `;
 
 const ErrorMessage = styled.p`
@@ -97,9 +85,9 @@ const LoginPage = () => {
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
 
-        <LoginButton type="submit" disabled={!isValid}>
+        <Button type="submit" disabled={!isValid}>
           로그인
-        </LoginButton>
+        </Button>
       </LoginForm>
     </LoginContainer>
   );
