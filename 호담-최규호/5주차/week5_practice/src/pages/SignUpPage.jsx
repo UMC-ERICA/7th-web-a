@@ -1,16 +1,11 @@
-import {useForm} from 'react-hook-form'
-import * as yup from 'yup'
-import {yupResolver} from '@hookform/resolvers/yup'
 import styled from "styled-components";
+import useForm from "../hooks/useForm.jsx";
+import {validateSignUp} from "../utils/validate.jsx"
 
 const SignUpText = styled.div`
   font-size: 1.625rem;
   font-weight: 700;
   color: white;
-`;
-
-const ErrorMassage = styled.div`
-  color: red;
 `;
 
 const SignUpContainer = styled.div`
@@ -25,35 +20,67 @@ const SignUpContainer = styled.div`
   font-weight: bold;
   font-size: 25px;
   padding: 0px 30px;
+`
+
+const Input = styled.input`
+  margin: 10px 0;
+  padding: 8px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+
+  border: ${props => props.error ? '4px solid red' : '1px solid #ccc'};
+
+  &:focus {
+    border-color: #007bff;
+  }
+`
+
+const ErrorText = styled.h1`
+  color: red;
+  font-size: 12px;
+`
+
+const SignUpButton = styled.button`
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ff69b4;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
 `;
 
 const SignUpPage = () => {
-  const schema = yup.object().shape({
-    email: yup.string().email().required('올바른 이메일 형식이 아닙니다. 다시 확인해주세요!'),
-    password: yup.string().min(8, '비밀번호는 8~16자 사이로 입력해주세요!').max(16, '비밀번호는 8~16자 사이로 입력해주세요!').required(),
+  const signUp = useForm({
+    initialValues: {
+      email: '',
+      password: '',
+      passwordCheck: '',
+    },
+    validate: validateSignUp
   })
 
-  const {register, handleSubmit, formState: {errors}} = useForm({
-    resolver: yupResolver(schema)
-  });
+  const handlePressSignUp = () => {
+    console.log(signUp.values.email, signUp.values.password, signUp.values.passwordCheck);
+  };
 
-  const onSubmit = (data) => {
-    console.log('폼 데이터 제출')
-    console.log(data);
-  }
+  console.log(signUp.values, signUp.errors, signUp.touched)
 
   return (
     <SignUpContainer>
       <SignUpText>
         회원가입
       </SignUpText>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input type={'email'} {...register("email")}/>
-        <ErrorMassage>{errors.email?.message}</ErrorMassage>
-        <input type={'password'} {...register("password")}/>
-        <ErrorMassage>{errors.password?.message}</ErrorMassage>
-        <input type={'submit'} value="회원가입"/>
-      </form>
+      <Input error={signUp.touched.email && signUp.errors.email} type={'email'} placeholder={'이메일을 입력해주세요!'} {...signUp.getTextInputProps('email')}/>
+      {signUp.touched.email && signUp.errors.email && <ErrorText>{signUp.errors.email}</ErrorText>}
+      <Input error={signUp.touched.password && signUp.errors.password} type={'password'} placeholder={'비밀번호를 입력해주세요!'} {...signUp.getTextInputProps('password')}/>
+      {signUp.touched.password && signUp.errors.password && <ErrorText>{signUp.errors.password}</ErrorText>}
+      <Input error={signUp.touched.password && signUp.errors.passwordCheck} type={'passwordCheck'} placeholder={'비밀번호를 다시 입력해주세요!'} {...signUp.getTextInputProps('passwordCheck')}/>
+      {signUp.touched.passwordCheck && signUp.errors.passwordCheck && <ErrorText>{signUp.errors.passwordCheck}</ErrorText>}
+
+      <SignUpButton onClick={handlePressSignUp}>회원가입</SignUpButton>
     </SignUpContainer>
   );
 };
