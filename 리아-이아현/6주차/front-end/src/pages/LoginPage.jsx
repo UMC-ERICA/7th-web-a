@@ -4,6 +4,8 @@ import * as yup from "yup";
 import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -56,8 +58,23 @@ const LoginPage = () => {
     mode: "onBlur",
   });
 
-  const onSubmit = (data) => {
-    console.log("로그인 데이터:", data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post("http://localhost:3000/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+      const { accessToken, refreshToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      navigate("/");
+    } catch (error) {
+      alert("로그인에 실패했습니다.");
+      console.error("로그인 실패:", error);
+    }
   };
 
   return (
