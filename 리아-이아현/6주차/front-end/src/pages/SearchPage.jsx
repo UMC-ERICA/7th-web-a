@@ -1,4 +1,8 @@
 import styled from "styled-components";
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import useFetchMovies from "../hooks/useFetchMovies";
+import MovieGrid from "../components/MovieGrid";
 
 const SearchContainer = styled.div`
   background-color: #222;
@@ -41,16 +45,59 @@ const SearchButton = styled.button`
   }
 `;
 
+const SearchResults = styled.div`
+  margin-top: 20px;
+`;
+
 const SearchPage = () => {
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams({
+    mq: "",
+  });
+
+  const mq = searchParams.get("mq");
+
+  const handleSearchMovie = () => {
+    if (mq === searchValue) return;
+    navigate(`/search?mq=${searchValue}`);
+  };
+
+  const handleSearchMovieWithKeyboard = (e) => {
+    if (e.key === "Enter") {
+      handleSearchMovie();
+    }
+  };
+
+  const url = `search/movie?query=${searchValue}&include_adult=false&language=ko-KR&page=1`;
+  const { data: movies, isLoading, isError } = useFetchMovies(url);
+  console.log(movies);
+
   return (
     <SearchContainer>
       <SearchBox>
-        <SearchInput placeholder="영화 제목을 입력해주세요..." />
-        <SearchButton>검색</SearchButton>
+        <SearchInput
+          placeholder="영화 제목을 입력해주세요..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={handleSearchMovieWithKeyboard}
+        />
+        <SearchButton onClick={handleSearchMovie}>검색</SearchButton>
       </SearchBox>
+
+      <SearchResults>
+        {isLoading && <p>로딩 중입니다...</p>}
+        {isError && <p>에러가 발생했습니다. 다시 시도해주세요.</p>}
+        {movies && movies.results && movies.results.length > 0 ? (
+          <MovieGrid movies={movies.results} />
+        ) : (
+          !isLoading && (
+            <p>해당하는 {searchValue}에 해당하는 데이터가 없습니다.</p>
+          )
+        )}
+      </SearchResults>
     </SearchContainer>
   );
 };
 
 export default SearchPage;
-
