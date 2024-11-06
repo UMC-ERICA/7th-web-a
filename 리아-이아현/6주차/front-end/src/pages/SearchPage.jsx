@@ -5,13 +5,52 @@ const SearchContainer = styled.div`
   color: white;
   height: 100vh;
   width: 100%;
-  font-weight: bold;
-  font-size: 25px;
-  padding: 30px 30px;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 50px;
+`;
+
+const SearchBox = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  height: 50px;
+  padding: 0 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px 0 0 10px;
+  outline: none;
+`;
+
+const SearchButton = styled.button`
+  height: 50px;
+  width: 120px;
+  font-size: 18px;
+  color: white;
+  background-color: #ff285e;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e02250;
+  }
 `;
 
 const SearchPage = () => {
-  return <SearchContainer><h3>검색 페이지 야호~!</h3></SearchContainer>;
+  return (
+    <SearchContainer>
+      <SearchBox>
+        <SearchInput placeholder="영화 제목을 입력해주세요..." />
+        <SearchButton>검색</SearchButton>
+      </SearchBox>
+    </SearchContainer>
+  );
 };
 
 export default SearchPage;
+
