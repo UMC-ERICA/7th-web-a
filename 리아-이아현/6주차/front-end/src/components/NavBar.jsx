@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../assets/logo.png";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 const NavbarContainer = styled.nav`
   display: flex;
@@ -42,18 +44,41 @@ const Button = styled(Link)`
 `;
 
 const Navbar = () => {
+  const { isLoggedIn, nickname, logout } = useContext(AuthContext);
+
   return (
     <NavbarContainer>
       <Logo to="/">
         <img src={LogoImage} alt="로고" />
       </Logo>
       <NavButtons>
-        <Button to="/login" color={"#333"}>
-          로그인
-        </Button>
-        <Button to="/signup" color={"#FF285E"}>
-          회원가입
-        </Button>
+        {isLoggedIn ? (
+          <>
+            <span>{nickname}님 반갑습니다!</span>
+            <button
+              onClick={logout}
+              style={{
+                backgroundColor: "#333",
+                color: "white",
+                border: "none",
+                borderRadius: "10px",
+                padding: "15px",
+                cursor: "pointer",
+              }}
+            >
+              로그아웃
+            </button>
+          </>
+        ) : (
+          <>
+            <Button to="/login" color={"#333"}>
+              로그인
+            </Button>
+            <Button to="/signup" color={"#FF285E"}>
+              회원가입
+            </Button>
+          </>
+        )}
       </NavButtons>
     </NavbarContainer>
   );

@@ -10,6 +10,7 @@ import PopularPage from "./pages/PopularPage.jsx";
 import TopRatedPage from "./pages/TopRatedPage.jsx";
 import UpComingPage from "./pages/UpComingPage.jsx";
 import MovieDetailPage from "./pages/MovieDetailPage.jsx";
+import { AuthProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +62,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
 export default App;
