@@ -31,6 +31,12 @@ const SearchContainer = styled.div`
     border-bottom-right-radius: 5px;
     margin-top: 20px;
   }
-`;
+`
 
-export {SearchContainer}
+const MovieGridContainer = styled.div`
+  margin=top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+`
+
+export {SearchContainer, MovieGridContainer}
