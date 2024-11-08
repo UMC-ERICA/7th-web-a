@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useFetchMovies from "../hooks/useFetchMovies";
 import MovieGrid from "../components/MovieGrid";
+import MovieSkeleton from "../components/MovieSkeleton";
 
 const SearchContainer = styled.div`
   background-color: #222;
@@ -49,6 +50,13 @@ const SearchResults = styled.div`
   margin-top: 20px;
 `;
 
+const SkeletonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 25px;
+  padding: 20px;
+`;
+
 const SearchPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
@@ -85,12 +93,18 @@ const SearchPage = () => {
       </SearchBox>
 
       <SearchResults>
-        {isLoading && <p>로딩 중입니다...</p>}
-        {isError && <p>에러가 발생했습니다. 다시 시도해주세요.</p>}
-        {movies && movies.length > 0 ? (
+        {isLoading ? (
+          <SkeletonGrid>
+            {Array.from({ length: 20 }, (_, index) => (
+              <MovieSkeleton key={index} />
+            ))}
+          </SkeletonGrid>
+        ) : isError ? (
+          <p>에러가 발생했습니다. 다시 시도해주세요.</p>
+        ) : movies && movies.length > 0 ? (
           <MovieGrid movies={movies} />
         ) : (
-          !isLoading && <p>해당하는 {searchValue}에 대한 데이터가 없습니다.</p>
+          <p>해당하는 {searchValue}에 대한 데이터가 없습니다.</p>
         )}
       </SearchResults>
     </SearchContainer>
