@@ -59,6 +59,7 @@ const SkeletonGrid = styled.div`
 
 const SearchPage = () => {
   const [searchValue, setSearchValue] = useState("");
+  const [isSearched, setIsSearched] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams({
     mq: "",
@@ -68,6 +69,7 @@ const SearchPage = () => {
 
   const handleSearchMovie = () => {
     if (mq === searchValue) return;
+    setIsSearched(true);
     navigate(`/search?mq=${searchValue}`);
   };
 
@@ -104,7 +106,7 @@ const SearchPage = () => {
         ) : movies && movies.length > 0 ? (
           <MovieGrid movies={movies} />
         ) : (
-          <p>해당하는 {searchValue}에 대한 데이터가 없습니다.</p>
+          isSearched && <p>해당하는 {searchValue}에 대한 데이터가 없습니다.</p>
         )}
       </SearchResults>
     </SearchContainer>
