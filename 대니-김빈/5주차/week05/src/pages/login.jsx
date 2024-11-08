@@ -14,7 +14,7 @@ const Input = styled.input`
   align-items: start;
   border-radius: 8px;
   border: ${(props) => (props.error ? '2px solid red' : '1px solid #ccc')};
-
+  
   &:focus {
     border-color: #007bff;
   }
