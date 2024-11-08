@@ -71,7 +71,6 @@ const SearchPage = () => {
 
   const url = `search/movie?query=${searchValue}&include_adult=false&language=ko-KR&page=1`;
   const { data: movies, isLoading, isError } = useFetchMovies(url);
-  console.log(movies);
 
   return (
     <SearchContainer>
@@ -88,12 +87,10 @@ const SearchPage = () => {
       <SearchResults>
         {isLoading && <p>로딩 중입니다...</p>}
         {isError && <p>에러가 발생했습니다. 다시 시도해주세요.</p>}
-        {movies && movies.results && movies.results.length > 0 ? (
-          <MovieGrid movies={movies.results} />
+        {movies && movies.length > 0 ? (
+          <MovieGrid movies={movies} />
         ) : (
-          !isLoading && (
-            <p>해당하는 {searchValue}에 해당하는 데이터가 없습니다.</p>
-          )
+          !isLoading && <p>해당하는 {searchValue}에 대한 데이터가 없습니다.</p>
         )}
       </SearchResults>
     </SearchContainer>
