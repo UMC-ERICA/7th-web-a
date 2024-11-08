@@ -7,7 +7,6 @@ const MovieGrid = styled.div`
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
-    width: 100%;
 `;
 
 const MovieCard = styled.div`

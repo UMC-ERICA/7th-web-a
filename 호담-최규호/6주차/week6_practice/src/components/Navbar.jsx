@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import styled from "styled-components";
 import Logo from "../assets/logo.png";
 
-const TopBarColor = styled.div`
+const TopBarContainer = styled.div`
     display: flex;
     justify-content: space-between; 
     align-items: center;
@@ -64,7 +64,7 @@ const SignUp = styled(Link)`
 
 const Navbar = () => {
     return (
-        <TopBarColor>
+        <TopBarContainer>
             <>
                 <Loggo to = "/">
                     <img src = {Logo} alt = "로고 이미지"></img>
@@ -84,7 +84,7 @@ const Navbar = () => {
                     </LocalButton>
                 </PublicButton>
             </>
-        </TopBarColor>
+        </TopBarContainer>
     )
 }
 

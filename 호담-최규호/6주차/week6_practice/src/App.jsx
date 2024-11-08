@@ -3,7 +3,7 @@ import RootLayout from "./layout/RootLayout";
 import MainPage from "./pages/MainPage";
 import SignUpPage from "./pages/SignUpPage";
 import LoginPage from "./pages/LoginPage";
-import SearchPage from "./pages/Search/SearchPage";
+import SearchPage from "./pages/SearchPage";
 import MoviePage from "./pages/MoviePage";
 import PlayingPage from "./pages/NowPlayingPage";
 import PopularPage from "./pages/PopularPage";

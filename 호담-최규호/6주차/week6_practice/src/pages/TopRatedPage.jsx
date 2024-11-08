@@ -2,23 +2,33 @@ import styled from "styled-components";
 import useRecycleState from "../hooks/useRecycleState.jsx";
 import { useNavigate } from 'react-router-dom';
 import MovieList from '../components/MovieList';
+import SkeletonList from "../components/Skeleton/SkeletonList.jsx"
 
-const LoadingText = styled.div`
-    color: black;
-    margin-top: 10px;
-    font-size: 90px;
-    text-align: center;
-    justify-content: center;
-    align-content: center;
-    height: 60vh;
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column; 
+  width: 100%;
+  background-color: #222;
 `;
+
+const MovieGridContainer = styled.div`
+  margin=top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+`
 
 const TopRatedPage = () => {
     const {data2: movies, isLoading, isError} = useRecycleState(`/movie/top_rated?language=ko-KR&page=1`)
     const navigate = useNavigate();
 
     if (isLoading) {
-        return <LoadingText>로딩 중 입니다. 잠시만 기다려주세요.</LoadingText>
+        return (
+          <PageContainer>
+            <MovieGridContainer>
+              <SkeletonList number={20}/>
+            </MovieGridContainer>
+          </PageContainer>
+        )
     }
 
     const onClickMovieItem = (movie) => {
