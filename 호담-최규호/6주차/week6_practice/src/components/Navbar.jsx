@@ -1,6 +1,9 @@
-import { Link } from "react-router-dom"
+// Navbar.js
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Logo from "../assets/logo.png";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const TopBarContainer = styled.div`
     display: flex;
@@ -40,7 +43,6 @@ const LocalButton = styled.button`
     }
 `;
 
-
 const Login = styled(Link)`
   display: inline-block;
   padding: 10px 20px;
@@ -63,29 +65,34 @@ const SignUp = styled(Link)`
 `;
 
 const Navbar = () => {
+    const { isLoggedIn, nickname, logout } = useContext(AuthContext);
+
     return (
         <TopBarContainer>
-            <>
-                <Loggo to = "/">
-                    <img src = {Logo} alt = "로고 이미지"></img>
-                </Loggo>
-            </>
-            <>
+            <Loggo to="/">
+                <img src={Logo} alt="로고 이미지" />
+            </Loggo>
+            {isLoggedIn ? (
                 <PublicButton>
-                    <LocalButton>
-                        <Login to = "/login">
-                            로그인
-                        </Login>
-                    </LocalButton>
-                    <LocalButton>
-                        <SignUp to = "/signup">
-                            회원가입
-                        </SignUp>
+                    <span style={{ color: "white", marginRight: "15px" }}>
+                        {nickname}님
+                    </span>
+                    <LocalButton onClick={logout}>
+                        로그아웃
                     </LocalButton>
                 </PublicButton>
-            </>
+            ) : (
+                <PublicButton>
+                    <LocalButton>
+                        <Login to="/login">로그인</Login>
+                    </LocalButton>
+                    <LocalButton>
+                        <SignUp to="/signup">회원가입</SignUp>
+                    </LocalButton>
+                </PublicButton>
+            )}
         </TopBarContainer>
-    )
-}
+    );
+};
 
 export default Navbar;

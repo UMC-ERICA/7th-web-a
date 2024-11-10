@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import useForm from "../hooks/useForm.jsx";
 import { validateLogin } from "../utils/validate.jsx";
-import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
+import { AuthContext } from "../context/AuthContext"; // AuthContext 가져오기
 
 const LoginText = styled.div`
   font-size: 1.625rem;
@@ -59,6 +59,7 @@ const LoginButton = styled.button`
 const LoginPage = () => {
   const memoizedValidate = useCallback((values) => validateLogin(values), []);
   const navigate = useNavigate();
+  const { login: authLogin } = useContext(AuthContext); // AuthContext의 login 함수 가져오기
 
   const login = useForm({
     initialValues: {
@@ -68,20 +69,17 @@ const LoginPage = () => {
     validate: memoizedValidate,
   });
 
-  const handlePressLogin = () => {
-    axios.post('http://localhost:3000/auth/login', {
-        email: login.values.email,
-        password: login.values.password,
-        passwordCheck: String(login.values.passwordCheck)
-      })
-      .then(response => {
-        navigate("/");
-      })
-      .catch(error => {
-        if (error.response && error.response.data.message) {
-          alert(error.response.data.message);
-        }
-      });
+  const handlePressLogin = async () => {
+    try {
+      await authLogin(login.values.email, login.values.password); // AuthContext의 login 함수 호출
+      navigate("/"); // 로그인 성공 후 페이지 이동
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        console.error("로그인 실패:", error);
+      }
+    }
   };
 
   return (
