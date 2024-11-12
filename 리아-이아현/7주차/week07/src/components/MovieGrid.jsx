@@ -6,7 +6,6 @@ const MovieGridStyle = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 25px;
-  padding: 20px;
   width: 100%;
   height: 100%;
   grid-auto-rows: 1fr;
