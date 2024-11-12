@@ -3,6 +3,7 @@ import IMG_BASE_URL from "../constants/path";
 import useFetchMovieDetail from "../hooks/useFetchMovieDetail";
 import useFetchMovieCredits from "../hooks/useFetchMovieCredits";
 import styled from "styled-components";
+import MovieDetailSkeleton from "../components/MovieDetailSkeleton";
 
 const MovieDetailContainer = styled.div`
   display: flex;
@@ -104,17 +105,13 @@ const MovieDetailPage = () => {
   } = useFetchMovieCredits(`/movie/${movieId}/credits?language=ko-KR`, "movie-credits");
 
   if (isDetailLoading || isCreditsLoading) {
-    return (
-      <div style={{ backgroundColor: "black" }}>
-        <h1 style={{ color: "white" }}>로딩 중 입니다...</h1>
-      </div>
-    );
+    return <MovieDetailSkeleton />;
   }
 
   if (isDetailError || isCreditsError) {
     return (
-      <div>
-        <h1 style={{ color: "white" }}>에러 입니다...</h1>
+      <div style={{ backgroundColor: "black", color: "white", textAlign: "center", padding: "20px" }}>
+        <h1>에러가 발생했습니다. 다시 시도해주세요.</h1>
       </div>
     );
   }
@@ -123,15 +120,7 @@ const MovieDetailPage = () => {
     return <h1 style={{ color: "white" }}>영화 정보를 불러올 수 없습니다.</h1>;
   }
 
-  const {
-    title,
-    poster_path,
-    release_date,
-    overview,
-    vote_average,
-    runtime,
-    tagline,
-  } = movieDetails;
+  const { title, poster_path, release_date, overview, vote_average, runtime, tagline } = movieDetails;
   const { cast, crew } = credits;
   const directors = crew.filter((member) => member.job === "Director");
 
