@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../apis/AxiosInstance.jsx";
 import styled from "styled-components";
+import SkeletonList from '../components/Skeleton/SkeletonList.jsx';
 
 const MovieDetailContainer = styled.div`
     flex-direction: column;
@@ -26,40 +28,42 @@ const CreditsContainer = styled.div`
     margin-top: 20px;
 `;
 
-const LoadingText = styled.div`
-    color: black;
-    margin-top: 10px;
-    font-size: 90px;
-    text-align: center;
-    justify-content: center;
-    align-content: center;
-    height: 60vh;
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column; 
+  width: 100%;
+  background-color: #222;
 `;
+
+const MovieGridContainer = styled.div`
+  margin=top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+`
+
+const fetchMovieDetail = async (movieId) => {
+    const response = await axiosInstance.get(`/movie/${movieId}?language=ko-KR&append_to_response=credits`);
+    return response.data;
+};
 
 const MovieDetailPage = () => {
     const { movieId } = useParams();
-    const [movieDetail, setMovieDetail] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
 
-    useEffect(() => {
-        const fetchMovieDetail = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axiosInstance.get(`/movie/${movieId}?language=ko-KR&append_to_response=credits`);
-                setMovieDetail(response.data);
-            } catch (error) {
-                console.error("영화 상세 정보를 가져오는 중 에러가 발생했습니다:", error);
-                setIsError(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchMovieDetail();
-    }, [movieId]);
+    const { data: movieDetail, isPending, isError } = useQuery({
+        queryKey: ['movieDetail', movieId],
+        queryFn: () => fetchMovieDetail(movieId),
+        staleTime: 10000,
+        cacheTime: 10000,
+    });
 
-    if (isLoading) {
-        return <LoadingText>로딩 중 입니다. 잠시만 기다려주세요.</LoadingText>;
+    if (isPending) {
+        return (
+          <PageContainer>
+            <MovieGridContainer>
+              <SkeletonList number={20}/>
+            </MovieGridContainer>
+          </PageContainer>
+        );
     }
 
     if (isError || !movieDetail) {

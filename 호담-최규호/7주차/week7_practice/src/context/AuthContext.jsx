@@ -1,18 +1,34 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [nickname, setNickname] = useState("");
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      fetchUserInfo(accessToken);
-    }
-  }, []);
+  const fetchUserInfo = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) throw new Error("No access token available");
+
+    const response = await axios.get("http://localhost:3000/user/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  };
+
+  const { data: userInfo, isLoading, isError } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: fetchUserInfo,
+    enabled: isLoggedIn,
+    onSuccess: () => {
+      setIsLoggedIn(true);
+    },
+    onError: () => {
+      logout();
+    },
+  });
 
   const login = async (email, password) => {
     try {
@@ -24,7 +40,8 @@ const AuthProvider = ({ children }) => {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
-      await fetchUserInfo(accessToken); // fetchUserInfo 완료까지 대기
+      setIsLoggedIn(true);
+      queryClient.invalidateQueries(["userInfo"]); // 로그인 후 사용자 정보 재요청
     } catch (error) {
       console.error("로그인 실패:", error);
       throw error;
@@ -35,26 +52,20 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setIsLoggedIn(false);
-    setNickname("");
+    queryClient.removeQueries(["userInfo"]); // 사용자 정보 캐시 삭제
   };
 
-  const fetchUserInfo = async (token) => {
-    try {
-      const response = await axios.get("http://localhost:3000/user/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const email = response.data.email;
-      const userNickname = email.split("@")[0];
-      setNickname(userNickname);
-      setIsLoggedIn(true); // 유저 정보가 성공적으로 불러와졌다면 로그인 상태로 설정
-    } catch (error) {
-      console.error("유저 정보 불러오기 실패:", error);
-      logout();
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setIsLoggedIn(true); // 토큰이 있으면 로그인 상태로 설정
     }
-  };
+  }, []);
+
+  const nickname = userInfo ? userInfo.email.split("@")[0] : "";
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, nickname, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, nickname, login, logout, isLoading, isError }}>
       {children}
     </AuthContext.Provider>
   );
