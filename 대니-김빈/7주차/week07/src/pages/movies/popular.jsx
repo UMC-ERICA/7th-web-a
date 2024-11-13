@@ -46,16 +46,6 @@ const MoivesPopularPage = () => {
         return <h1 style={{ color: 'white' }}>에러가 발생했습니다.</h1>;
     }
 
-    const movies = data.pages.flatMap(page => page.results);
-
-    if (isLoading) {
-        return <h1 style={{ color: 'white' }}>로딩 중 입니다...</h1>;
-    }
-
-    if (isError) {
-        return <h1 style={{ color: 'white' }}>에러가 발생했습니다.</h1>;
-    }
-
     return (
         <>
             <PageWrapper>
