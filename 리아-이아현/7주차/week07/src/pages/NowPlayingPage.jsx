@@ -1,8 +1,9 @@
-import { useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import instance from "../apis/instance";
 import MovieGrid from "../components/MovieGrid";
 import MovieSkeleton from "../components/MovieSkeleton";
+import Button from "../components/Button";
 import styled from "styled-components";
 
 const PageContainer = styled.div`
@@ -10,72 +11,55 @@ const PageContainer = styled.div`
   box-sizing: border-box;
   padding: 20px;
   background-color: black;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const LoadingSpinner = styled.div`
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  width: 40px;
+const ContentContainer = styled.div`
+  flex-grow: 1;
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 2px solid #444;
+`;
+
+const PageButton = styled(Button)`
+  width: 80px;
   height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+  font-size: 15px;
+  margin: 0;
 `;
 
-const fetchNowPlayingMovies = async ({ pageParam = 1 }) => {
+const fetchMovies = async (page) => {
   const response = await instance.get(
-    `/movie/now_playing?language=ko-KR&page=${pageParam}`
+    `/movie/now_playing?language=ko-KR&page=${page}`
   );
-  return {
-    results: response.data.results,
-    nextPage: pageParam + 1,
-    totalPages: response.data.total_pages,
-  };
+  return response.data.results;
 };
 
 const NowPlayingPage = () => {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useInfiniteQuery({
-    queryKey: ["now-playing"],
-    queryFn: fetchNowPlayingMovies,
-    getNextPageParam: (lastPage, pages) => {
-      return lastPage.nextPage <= lastPage.totalPages
-        ? lastPage.nextPage
-        : undefined;
-    },
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["now-playing-movies", page],
+    queryFn: () => fetchMovies(page),
+    keepPreviousData: true,
   });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop + 50 >=
-          document.documentElement.scrollHeight &&
-        hasNextPage
-      ) {
-        fetchNextPage();
-      }
-    };
+  const handlePreviousPage = () => {
+    if (page > 1) setPage((prev) => prev - 1);
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasNextPage, fetchNextPage]);
-
-  const skeletonCount = 20;
+  const handleNextPage = () => {
+    setPage((prev) => prev + 1);
+  };
 
   if (isLoading) {
     return (
@@ -87,7 +71,7 @@ const NowPlayingPage = () => {
             gap: "25px",
           }}
         >
-          {Array.from({ length: skeletonCount }).map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <MovieSkeleton key={index} />
           ))}
         </div>
@@ -97,13 +81,7 @@ const NowPlayingPage = () => {
 
   if (isError) {
     return (
-      <PageContainer
-        style={{
-          backgroundColor: "black",
-          color: "white",
-          textAlign: "center",
-        }}
-      >
+      <PageContainer style={{ color: "white", textAlign: "center" }}>
         <h1>에러가 발생했습니다. 다시 시도해주세요.</h1>
       </PageContainer>
     );
@@ -111,20 +89,16 @@ const NowPlayingPage = () => {
 
   return (
     <PageContainer>
-      <MovieGrid movies={data.pages.flatMap((page) => page.results)} />
-      {isFetchingNextPage && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-          }}
-        >
-          {Array.from({ length: skeletonCount }).map((_, index) => (
-            <MovieSkeleton key={index} />
-          ))}
-        </div>
-      )}
-      {isFetchingNextPage && <LoadingSpinner />}
+      <ContentContainer>
+        <MovieGrid movies={data} />
+      </ContentContainer>
+      <PaginationContainer>
+        <PageButton onClick={handlePreviousPage} disabled={page === 1}>
+          이전
+        </PageButton>
+        <span style={{ color: "white", fontSize: "18px" }}>{page} 페이지</span>
+        <PageButton onClick={handleNextPage}>다음</PageButton>
+      </PaginationContainer>
     </PageContainer>
   );
 };
