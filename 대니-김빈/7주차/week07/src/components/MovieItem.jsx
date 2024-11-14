@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 const MoviesItem = styled.div`
-    width: 170px;
+    width: 140px;
     text-align: center;
     border-radius: 8px;
-    margin: 10px;
+    margin: 14px;
 `;
 
 const MovieImage = styled.img`

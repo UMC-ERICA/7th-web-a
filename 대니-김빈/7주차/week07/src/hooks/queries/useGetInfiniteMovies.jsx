@@ -2,6 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useGetMovies } from "./useGetMovies";
 
 function useGetInfiniteMovies(category) {
+    
     return useInfiniteQuery({
         queryFn: ({ pageParam = 1 }) => useGetMovies({ category, pageParam }),
         queryKey: ['movies', category],
