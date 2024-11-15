@@ -1,9 +1,9 @@
 import styled from "styled-components";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import MovieList from '../components/MovieList';
 import SkeletonList from "../components/Skeleton/SkeletonList.jsx";
 import { useGetPaginationMovies } from "../hooks/queries/useGetPaginationMovies";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ScrollToTop from "../components/ScrollToTop.jsx";
 
 const PageContainer = styled.div`
@@ -40,9 +40,14 @@ const PageButton = styled.button`
 `;
 
 const TopRatedPage = () => {
-  const [page, setPage] = useState(1); // 페이지 상태 추가
-  const { data, isFetching, isError, isPending } = useGetPaginationMovies({ category: 'top_rated', page });
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const initialPage = parseInt(queryParams.get("page")) || 1;
+
+  const [page, setPage] = useState(initialPage);
+  const { data, isFetching, isError, isPending } = useGetPaginationMovies({ category: 'top_rated', page });
 
   const onClickMovieItem = (movie) => {
     navigate(`/movie/${movie.id}`, {
@@ -51,7 +56,13 @@ const TopRatedPage = () => {
   };
 
   const handleNextPage = () => setPage(prev => prev + 1);
-  const handlePreviousPage = () => setPage(prev => Math.max(1, prev - 1)); // 0 페이지 접근 방지
+  const handlePreviousPage = () => setPage(prev => Math.max(1, prev - 1));
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    query.set("page", page);
+    navigate({ search: query.toString() }, { replace: true });
+  }, [page, navigate, location.search]);
 
   if (isPending) {
     return (
