@@ -4,6 +4,7 @@ import MovieList from '../components/MovieList';
 import SkeletonList from "../components/Skeleton/SkeletonList.jsx";
 import { useGetPaginationMovies } from "../hooks/queries/useGetPaginationMovies";
 import { useState } from "react";
+import ScrollToTop from "../components/ScrollToTop.jsx";
 
 const PageContainer = styled.div`
   display: flex;
@@ -70,6 +71,7 @@ const PopularPage = () => {
 
   return (
     <PageContainer>
+      <ScrollToTop />
       <MovieGridContainer>
         <MovieList movies={movies} onClickMovieItem={onClickMovieItem} />
       </MovieGridContainer>
