@@ -13,8 +13,6 @@ function TodoInput({ onAddTodo }: ITodoInput) {
       onAddTodo(title, content);
       setTitle("");
       setContent("");
-    } else {
-      alert("제목과 내용을 모두 입력해주세요!");
     }
   };
 
@@ -34,7 +32,12 @@ function TodoInput({ onAddTodo }: ITodoInput) {
         }
         placeholder="내용을 입력해주세요"
       />
-      <button onClick={handleAddTodo}>ToDo 생성</button>
+      <button
+        onClick={handleAddTodo}
+        disabled={!title.trim() || !content.trim()}
+      >
+        ToDo 생성
+      </button>
     </>
   );
 }

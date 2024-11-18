@@ -6,7 +6,7 @@ interface ITodoList {
   todos: TTodo[];
   onToggleTodo: (id: number, checked: boolean) => void;
   onDeleteTodo: (id: number) => void;
-  onEditTodo: (id: number, title: string, content: string) => void; // 수정 함수 추가
+  onEditTodo: (id: number, title: string, content: string) => void;
 }
 
 function TodoList({
