@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { TTodo } from "../types/todo";
 import CheckBox from "./CheckBox";
-import Loading from "./Loading";
 import styled from "styled-components";
 
 interface ITodoList {
@@ -14,7 +13,6 @@ interface ITodoList {
 
 function TodoList({
   todos,
-  loading,
   onToggleTodo,
   onDeleteTodo,
   onEditTodo,
@@ -37,10 +35,6 @@ function TodoList({
       setEditContent("");
     }
   };
-
-  if (loading) {
-    return <Loading />;
-  }
 
   return (
     <StyledList>
