@@ -2,12 +2,11 @@ import { ChangeEvent } from "react";
 
 interface ICheckBox {
   id: number;
-  label: string;
   checked: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-function CheckBox({ id, label, checked, onChange }: ICheckBox) {
+function CheckBox({ id, checked, onChange }: ICheckBox) {
   return (
     <>
       <input
@@ -16,7 +15,6 @@ function CheckBox({ id, label, checked, onChange }: ICheckBox) {
         checked={checked}
         onChange={onChange}
       />
-      <label htmlFor={String(id)}>{label}</label>
     </>
   );
 }
