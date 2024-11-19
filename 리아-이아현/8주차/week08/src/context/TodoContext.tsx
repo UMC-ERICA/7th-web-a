@@ -10,6 +10,7 @@ import axios from "axios";
 
 interface ITodoContext {
   todos: TTodo[];
+  loading: boolean;
   onAddTodo: (title: string, content: string) => void;
   onToggleTodo: (id: number, checked: boolean) => void;
   onDeleteTodo: (id: number) => void;
@@ -20,8 +21,10 @@ const TodoContext = createContext<ITodoContext | null>(null);
 
 export const TodoProvider = ({ children }: PropsWithChildren) => {
   const [todos, setTodos] = useState<TTodo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get("http://localhost:3000/todo")
       .then((response) => {
@@ -30,11 +33,15 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
       })
       .catch((error) => {
         console.error("Error fetching todos:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const onAddTodo = async (title: string, content: string) => {
     try {
+      setLoading(true);
       const response = await axios.post("http://localhost:3000/todo", {
         title,
         content,
@@ -81,7 +88,14 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <TodoContext.Provider
-      value={{ todos, onAddTodo, onToggleTodo, onDeleteTodo, onEditTodo }}
+      value={{
+        todos,
+        loading,
+        onAddTodo,
+        onToggleTodo,
+        onDeleteTodo,
+        onEditTodo,
+      }}
     >
       {children}
     </TodoContext.Provider>

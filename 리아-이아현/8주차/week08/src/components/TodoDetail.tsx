@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useTodoContext } from "../context/TodoContext";
+import Loading from "./Loading";
 
 function TodoDetail() {
   const { id } = useParams<{ id: string }>();
@@ -37,7 +38,7 @@ function TodoDetail() {
   };
 
   if (!todo) {
-    return <p>Loading...</p>;
+    return <Loading/>;
   }
 
   return (
