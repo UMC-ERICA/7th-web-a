@@ -12,6 +12,14 @@ import UpComingPage from "./pages/UpComingPage";
 import MovieDetailPage from "./pages/MovieDetailPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AuthProvider from "./context/AuthContext";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const router = createBrowserRouter([
   {
@@ -66,11 +74,18 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient()
+console.log("App component loaded");
 function App() {
+  console.log("Environment:", process.env.NODE_ENV);
+  console.log("ReactQueryDevtools:", ReactQueryDevtools);
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 

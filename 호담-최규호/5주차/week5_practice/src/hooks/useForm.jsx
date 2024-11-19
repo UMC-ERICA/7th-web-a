@@ -10,14 +10,14 @@ function useForm({initialValues, validate}){
             ...values,
             [name]: value
         });
-    }
+    };
 
     const handleBlur = (name) => {
         setTouched({
             ...touched,
             [name]: true
-        })
-    }
+        });
+    };
 
     const getTextInputProps =(name) => {
         const value = values[name];
