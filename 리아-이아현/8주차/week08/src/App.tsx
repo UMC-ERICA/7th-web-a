@@ -1,14 +1,21 @@
 import styled from "styled-components";
 import TodoContainer from "./components/TodoContainer";
 import { TodoProvider } from "./context/TodoContext";
+import TodoDetail from "./components/TodoDetail";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <TodoProvider>
-      <AppContainer>
-        <StyledHeader>⚡ UMC ToDoList ⚡</StyledHeader>
-        <TodoContainer />
-      </AppContainer>
+      <Router>
+        <AppContainer>
+          <StyledHeader>⚡ UMC ToDoList ⚡</StyledHeader>
+          <Routes>
+            <Route path="/" element={<TodoContainer />} />
+            <Route path="/todo/:id" element={<TodoDetail />} />
+          </Routes>
+        </AppContainer>
+      </Router>
     </TodoProvider>
   );
 }
