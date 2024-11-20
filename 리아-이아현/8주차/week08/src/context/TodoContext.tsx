@@ -1,17 +1,12 @@
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { TTodo } from "../types/todo";
+import { createContext, PropsWithChildren, useContext } from "react";
 import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { TTodo } from "../types/todo";
 
 interface ITodoContext {
   todos: TTodo[];
-  loading: boolean;
-  error: boolean;
+  isLoading: boolean;
+  isError: boolean;
   onAddTodo: (title: string, content: string) => void;
   onToggleTodo: (id: number, checked: boolean) => void;
   onDeleteTodo: (id: number) => void;
@@ -20,89 +15,92 @@ interface ITodoContext {
 
 const TodoContext = createContext<ITodoContext | null>(null);
 
+const API_URL = "http://localhost:3000/todo";
+
 export const TodoProvider = ({ children }: PropsWithChildren) => {
-  const [todos, setTodos] = useState<TTodo[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setLoading(true);
-    setError(false);
-    axios
-      .get("http://localhost:3000/todo")
-      .then((response) => {
-        const [todoList] = response.data;
-        setTodos(todoList);
-      })
-      .catch((error) => {
-        console.error("Error fetching todos:", error);
-        setError(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+  // GET
+  const {
+    data: todos = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["todos"],
+    queryFn: async () => {
+      const response = await axios.get(API_URL);
+      return response.data[0];
+    },
+  });
 
-  const onAddTodo = async (title: string, content: string) => {
-    try {
-      setError(false);
-      const response = await axios.post("http://localhost:3000/todo", {
-        title,
-        content,
-      });
-      setTodos((prevTodos) => [...prevTodos, response.data]);
-    } catch (error) {
-      console.error("Error adding todo:", error);
-      setError(true);
-    }
+  // POST
+  const addTodoMutation = useMutation({
+    mutationFn: async ({
+      title,
+      content,
+    }: {
+      title: string;
+      content: string;
+    }) => {
+      const response = await axios.post(API_URL, { title, content });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  // DELETE
+  const deleteTodoMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await axios.delete(`${API_URL}/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  // PATCH
+  const editTodoMutation = useMutation({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: number;
+      updates: Partial<TTodo>;
+    }) => {
+      const response = await axios.patch(`${API_URL}/${id}`, updates);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  // Handlers
+  const onAddTodo = (title: string, content: string) => {
+    addTodoMutation.mutate({ title, content });
   };
 
-  const onToggleTodo = async (id: number, checked: boolean) => {
-    try {
-      setError(false);
-      await axios.patch(`http://localhost:3000/todo/${id}`, { checked });
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) => (todo.id === id ? { ...todo, checked } : todo))
-      );
-    } catch (error) {
-      console.error("Error toggling todo:", error);
-      setError(true);
-    }
+  const onDeleteTodo = (id: number) => {
+    deleteTodoMutation.mutate(id);
   };
 
-  const onDeleteTodo = async (id: number) => {
-    try {
-      setError(false);
-      await axios.delete(`http://localhost:3000/todo/${id}`);
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    } catch (error) {
-      console.error("Error deleting todo:", error);
-      setError(true);
-    }
+  const onEditTodo = (id: number, title: string, content: string) => {
+    editTodoMutation.mutate({ id, updates: { title, content } });
   };
 
-  const onEditTodo = async (id: number, title: string, content: string) => {
-    try {
-      setError(false);
-      const updatedTodo = { title, content };
-      await axios.patch(`http://localhost:3000/todo/${id}`, updatedTodo);
-      setTodos((prevTodos) =>
-        prevTodos.map((todo) =>
-          todo.id === id ? { ...todo, ...updatedTodo } : todo
-        )
-      );
-    } catch (error) {
-      console.error("Error editing todo:", error);
-      setError(true);
-    }
+  const onToggleTodo = (id: number, checked: boolean) => {
+    editTodoMutation.mutate({ id, updates: { checked } });
   };
 
   return (
     <TodoContext.Provider
       value={{
         todos,
-        loading,
-        error,
+        isLoading,
+        isError,
         onAddTodo,
         onToggleTodo,
         onDeleteTodo,
@@ -114,10 +112,10 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-export function useTodoContext() {
-  const todos = useContext(TodoContext);
-  if (todos == null) {
+export const useTodoContext = () => {
+  const context = useContext(TodoContext);
+  if (!context) {
     throw new Error("TodoProvider를 찾을 수 없습니다.");
   }
-  return todos;
-}
+  return context;
+};

@@ -5,7 +5,6 @@ import styled from "styled-components";
 
 interface ITodoList {
   todos: TTodo[];
-  loading: boolean;
   onToggleTodo: (id: number, checked: boolean) => void;
   onDeleteTodo: (id: number) => void;
   onEditTodo: (id: number, title: string, content: string) => void;

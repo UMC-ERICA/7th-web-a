@@ -7,19 +7,19 @@ import Error from "./Error";
 function TodoContainer() {
   const {
     todos,
-    loading,
-    error,
+    isLoading,
+    isError,
     onAddTodo,
     onToggleTodo,
     onDeleteTodo,
     onEditTodo,
   } = useTodoContext();
 
-  if (loading) {
+  if (isLoading) {
     return <Loading />;
   }
 
-  if (error) {
+  if (isError) {
     return <Error />;
   }
 
@@ -28,7 +28,6 @@ function TodoContainer() {
       <TodoInput onAddTodo={onAddTodo} />
       <TodoList
         todos={todos}
-        loading={loading}
         onToggleTodo={onToggleTodo}
         onDeleteTodo={onDeleteTodo}
         onEditTodo={onEditTodo}
