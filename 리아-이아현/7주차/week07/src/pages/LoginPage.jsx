@@ -8,21 +8,43 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useMutation } from "@tanstack/react-query";
+import movie4 from "../assets/movie4.jpg";
 
 const LoginContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
-  background-color: #222;
-  color: white;
-  width: 100%;
-  height: 60vh;
   align-items: center;
-  justify-content: flex-start;
-  padding: 150px 0;
+  justify-content: center;
+  width: 100%;
+  height: 90vh;
+  background-image: url(${movie4});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+`;
+
+const Content = styled.div`
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  max-width: 400px;
 `;
 
 const Title = styled.h1`
-  margin-bottom: 50px;
+  font-size: 30px;
+  margin-bottom: 20px;
 `;
 
 const LoginForm = styled.form`
@@ -82,32 +104,35 @@ const LoginPage = () => {
 
   return (
     <LoginContainer>
-      <Title>로그인</Title>
-      <LoginForm onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          type="email"
-          placeholder="이메일을 입력해주세요!"
-          {...register("email")}
-          $isError={errors.email && touchedFields.email}
-        />
-        {errors.email && touchedFields.email && (
-          <ErrorMessage>{errors.email.message}</ErrorMessage>
-        )}
+      <Overlay />
+      <Content>
+        <Title>로그인</Title>
+        <LoginForm onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            type="email"
+            placeholder="이메일을 입력해주세요!"
+            {...register("email")}
+            $isError={errors.email && touchedFields.email}
+          />
+          {errors.email && touchedFields.email && (
+            <ErrorMessage>{errors.email.message}</ErrorMessage>
+          )}
 
-        <Input
-          type="password"
-          placeholder="비밀번호를 입력해주세요!"
-          {...register("password")}
-          $isError={errors.password && touchedFields.password}
-        />
-        {errors.password && touchedFields.password && (
-          <ErrorMessage>{errors.password.message}</ErrorMessage>
-        )}
+          <Input
+            type="password"
+            placeholder="비밀번호를 입력해주세요!"
+            {...register("password")}
+            $isError={errors.password && touchedFields.password}
+          />
+          {errors.password && touchedFields.password && (
+            <ErrorMessage>{errors.password.message}</ErrorMessage>
+          )}
 
-        <Button type="submit" disabled={!isValid || mutation.isLoading}>
-          {mutation.isLoading ? "로그인 중..." : "로그인"}
-        </Button>
-      </LoginForm>
+          <Button type="submit" disabled={!isValid || mutation.isLoading}>
+            {mutation.isLoading ? "로그인 중..." : "로그인"}
+          </Button>
+        </LoginForm>
+      </Content>
     </LoginContainer>
   );
 };
