@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useMutation } from "@tanstack/react-query";
 
 const LoginContainer = styled.div`
   display: flex;
@@ -62,14 +63,21 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const onSubmit = async (data) => {
-    try {
-      await login(data.email, data.password);
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      return await login(data.email, data.password);
+    },
+    onSuccess: () => {
+      alert("로그인 성공!");
       navigate("/");
-    } catch (error) {
-      alert("로그인에 실패했습니다.");
-      console.error("로그인 실패:", error);
-    }
+    },
+    onError: () => {
+      alert("로그인 실패! 다시 시도해주세요.");
+    },
+  });
+
+  const onSubmit = (data) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -96,8 +104,8 @@ const LoginPage = () => {
           <ErrorMessage>{errors.password.message}</ErrorMessage>
         )}
 
-        <Button type="submit" disabled={!isValid}>
-          로그인
+        <Button type="submit" disabled={!isValid || mutation.isLoading}>
+          {mutation.isLoading ? "로그인 중..." : "로그인"}
         </Button>
       </LoginForm>
     </LoginContainer>

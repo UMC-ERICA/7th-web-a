@@ -4,8 +4,9 @@ import * as yup from "yup";
 import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const SignUpContainer = styled.div`
   display: flex;
@@ -87,18 +88,26 @@ const SignUpPage = () => {
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    console.log("보낼 데이터:", data);
-    try {
-      await axios.post("http://localhost:3000/auth/register", {
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      return await axios.post("http://localhost:3000/auth/register", {
         email: data.email,
         password: data.password,
         passwordCheck: data.checkPassword,
       });
+    },
+    onSuccess: () => {
+      alert("회원가입 성공!");
       navigate("/login");
-    } catch (error) {
+    },
+    onError: (error) => {
+      alert("회원가입 실패!");
       console.error("회원가입 실패:", error);
-    }
+    },
+  });
+
+  const onSubmit = (data) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -142,8 +151,8 @@ const SignUpPage = () => {
         </GenderSelect>
         {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
 
-        <Button type="submit" disabled={!isValid}>
-          제출
+        <Button type="submit" disabled={!isValid || mutation.isLoading}>
+          {mutation.isLoading ? "처리 중..." : "제출"}
         </Button>
       </SignUpForm>
     </SignUpContainer>
