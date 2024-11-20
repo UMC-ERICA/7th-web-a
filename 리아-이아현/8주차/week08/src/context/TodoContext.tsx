@@ -45,7 +45,27 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
       const response = await axios.post(API_URL, { title, content });
       return response.data;
     },
-    onSuccess: () => {
+    onMutate: async ({ title, content }) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      const previousTodos = queryClient.getQueryData<TTodo[]>(["todos"]);
+      queryClient.setQueryData(["todos"], (oldTodos: TTodo[] | undefined) => [
+        ...(oldTodos || []),
+        {
+          id: Date.now(),
+          title,
+          content,
+          checked: false,
+          createdAt: "",
+          updatedAt: "",
+          version: 1,
+        },
+      ]);
+      return { previousTodos };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
@@ -56,7 +76,20 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
       const response = await axios.delete(`${API_URL}/${id}`);
       return response.data;
     },
-    onSuccess: () => {
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      const previousTodos = queryClient.getQueryData<TTodo[]>(["todos"]);
+      queryClient.setQueryData(
+        ["todos"],
+        (oldTodos: TTodo[] | undefined) =>
+          oldTodos?.filter((todo) => todo.id !== id) || []
+      );
+      return { previousTodos };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
@@ -73,27 +106,25 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
       const response = await axios.patch(`${API_URL}/${id}`, updates);
       return response.data;
     },
-    onSuccess: () => {
+    onMutate: async ({ id, updates }) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      const previousTodos = queryClient.getQueryData<TTodo[]>(["todos"]);
+      queryClient.setQueryData(
+        ["todos"],
+        (oldTodos: TTodo[] | undefined) =>
+          oldTodos?.map((todo) =>
+            todo.id === id ? { ...todo, ...updates } : todo
+          ) || []
+      );
+      return { previousTodos };
+    },
+    onError: (_error, _variables, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTodos);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
-
-  // Handlers
-  const onAddTodo = (title: string, content: string) => {
-    addTodoMutation.mutate({ title, content });
-  };
-
-  const onDeleteTodo = (id: number) => {
-    deleteTodoMutation.mutate(id);
-  };
-
-  const onEditTodo = (id: number, title: string, content: string) => {
-    editTodoMutation.mutate({ id, updates: { title, content } });
-  };
-
-  const onToggleTodo = (id: number, checked: boolean) => {
-    editTodoMutation.mutate({ id, updates: { checked } });
-  };
 
   return (
     <TodoContext.Provider
@@ -101,10 +132,13 @@ export const TodoProvider = ({ children }: PropsWithChildren) => {
         todos,
         isLoading,
         isError,
-        onAddTodo,
-        onToggleTodo,
-        onDeleteTodo,
-        onEditTodo,
+        onAddTodo: (title, content) =>
+          addTodoMutation.mutate({ title, content }),
+        onDeleteTodo: (id) => deleteTodoMutation.mutate(id),
+        onEditTodo: (id, title, content) =>
+          editTodoMutation.mutate({ id, updates: { title, content } }),
+        onToggleTodo: (id, checked) =>
+          editTodoMutation.mutate({ id, updates: { checked } }),
       }}
     >
       {children}
