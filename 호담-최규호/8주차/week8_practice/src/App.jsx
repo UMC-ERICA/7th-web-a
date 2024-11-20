@@ -4,16 +4,31 @@ import styled from "styled-components";
 import { postTodo, getTodoList, deleteTodo, patchTodo } from "./apis/todo";
 import { queryClient } from "./main";
 
+const Title = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-Top: 10px;
+  font-size: 30px;
+  font-weight: bold;
+`
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
 `;
 
 const Input = styled.input`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   padding: 10px;
-  border: 1px solid purple;
-  border-radius: 20px;
+  border-radius: 10px;
   margin-Bottom: 20px;
 `;
 
@@ -28,15 +43,25 @@ const Button = styled.button`
   }
 `;
 
+const LoadingMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+`
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   gap: 20px;
 `
 
 const ToDoContainer = styled.div`
   display: flex;
-
   gap: 20px;
 `;
 
@@ -63,7 +88,7 @@ function App() {
 
   const { mutate:deleteTodoMutation } = useMutation({
     mutationFn: deleteTodo,
-    onSucess: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["todos"],
       });
@@ -86,9 +111,12 @@ function App() {
 
   return (
     <>
-      <h1>⚡️UMC ToDoList⚡️</h1>
-      <Input value={search} onChange={(e) => setSearch(e.target.value)} />
+      <Title>⚡️UMC ToDoList⚡️</Title>
       <Form onSubmit={handleSubmit}>
+        <Input 
+          placeholder="찾고 싶은 리스트를 검색하세요."
+          value={search} 
+          onChange={(e) => setSearch(e.target.value)} />
         <Input
           name="title"
           placeholder="제목을 입력해주세요."
@@ -102,7 +130,7 @@ function App() {
         <Button type="submit">투두 생성</Button>
       </Form>
       {isPending ? (
-        <div>로딩중입니다.</div>
+        <LoadingMessage>로딩중입니다.</LoadingMessage>
       ) : (
         <Container>
           {todos[0]?.map((todo) => (
