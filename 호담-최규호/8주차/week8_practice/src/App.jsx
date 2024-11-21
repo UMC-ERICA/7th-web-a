@@ -3,39 +3,59 @@ import { useState } from "react";
 import styled from "styled-components";
 import { postTodo, getTodoList, deleteTodo, patchTodo } from "./apis/todo";
 import { queryClient } from "./main";
+import Spinner from "./components/LoadingSpinner";
+
+const StyleContainer = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(220, 240, 250);  
+`;
 
 const Title = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin-Top: 10px;
-  font-size: 30px;
+  margin-Top: 70px;
+  font-size: 40px;
+  font-weight: bold;
+`
+
+const SubTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 20px;
   font-weight: bold;
 `
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
+  margin-Top: 30px;
+  margin-Bottom: 30px;
   gap: 10px;
 `;
 
 const Input = styled.input`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
   padding: 10px;
   border-radius: 10px;
-  margin-Bottom: 20px;
+  margin-Bottom: 0;
+  width: 600px;
 `;
 
-const Button = styled.button`
+const CreateButton = styled.button`
   border-radius: 10px;
   border: none;
-  padding: 20px;
+  padding: 10px 20px;
+  height: auto;
+  width: 600px;
+  margin-Bottom: 50px;
   &:hover {
     background: cornflowerblue;
     color: white;
@@ -43,14 +63,22 @@ const Button = styled.button`
   }
 `;
 
-const LoadingMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  font-size: 30px;
-  font-weight: bold;
-`
+const DeleteButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  color: #000;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: red;
+    color: white;
+  }
+`;
 
 const Container = styled.div`
   display: flex;
@@ -60,16 +88,26 @@ const Container = styled.div`
   gap: 20px;
 `
 
+const ListContainer = styled.div`
+  display: row;
+`;
+
 const ToDoContainer = styled.div`
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  background-color: #fff;
+  width: 100%;
+  max-width: 600px;
 `;
 
 function App() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [search, setSearch] = useState("");
-  const [checked, setChecked] = useState(false);
 
   const { data: todos, isPending } = useQuery({
     queryFn: () => getTodoList({ title: search }),
@@ -110,13 +148,9 @@ function App() {
   }
 
   return (
-    <>
+    <StyleContainer>
       <Title>⚡️UMC ToDoList⚡️</Title>
       <Form onSubmit={handleSubmit}>
-        <Input 
-          placeholder="찾고 싶은 리스트를 검색하세요."
-          value={search} 
-          onChange={(e) => setSearch(e.target.value)} />
         <Input
           name="title"
           placeholder="제목을 입력해주세요."
@@ -127,25 +161,32 @@ function App() {
           placeholder="콘텐츠를 입력해주세요."
           value={content} 
           onChange={(e) => setContent(e.target.value)} />
-        <Button type="submit">투두 생성</Button>
+        <CreateButton type="submit">ToDo 생성</CreateButton>
+      </Form>
+      <SubTitle>찾고 싶은 리스트를 검색해주세요.</SubTitle>
+      <Form onSubmit={handleSubmit}>
+        <Input 
+          placeholder="찾고 싶은 리스트를 검색하세요."
+          value={search} 
+          onChange={(e) => setSearch(e.target.value)} />
       </Form>
       {isPending ? (
-        <LoadingMessage>로딩중입니다.</LoadingMessage>
+        <Spinner />
       ) : (
         <Container>
           {todos[0]?.map((todo) => (
             <ToDoContainer key={todo.id}>
               <input type="checkbox" defaultChecked={todo.checked} onChange={(e) => patchTodoMutation({ id: todo.id, checked: !todo.checked })} />
-              <div>
+              <ListContainer>
                 <p>{todo.title}</p>
                 <p>{todo.content}</p>
-              </div>
-              <button onClick={() => deleteTodoMutation({ id: todo.id })}>삭제하기</button>
+              </ListContainer>
+              <DeleteButton onClick={() => deleteTodoMutation({ id: todo.id })}>삭제하기</DeleteButton>
             </ToDoContainer>
           ))}
         </Container>
       )}
-    </>
+    </StyleContainer>
   );
 }
 
