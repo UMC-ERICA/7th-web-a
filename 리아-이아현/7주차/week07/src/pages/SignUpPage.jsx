@@ -4,23 +4,49 @@ import * as yup from "yup";
 import styled from "styled-components";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import movie3 from "../assets/movie3.jpg";
 
 const SignUpContainer = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: #222;
+  position: relative;
   color: white;
   width: 100%;
   height: 60vh;
   align-items: center;
   justify-content: flex-start;
   padding: 150px 0;
+  background-image: url(${movie3});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+  pointer-events: none;
+`;
+
+const Content = styled.div`
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  max-width: 400px;
 `;
 
 const Title = styled.h1`
-  margin-bottom: 50px;
+  font-size: 30px;
+  margin-bottom: 20px;
 `;
 
 const SignUpForm = styled.form`
@@ -37,14 +63,15 @@ const ErrorMessage = styled.p`
 `;
 
 const GenderSelect = styled.select`
-  width: 470px;
-  height: 40px;
+  width: 370px;
+  height: 50px;
   padding: 10px;
   margin: 10px 0;
-  font-size: 18px;
+  font-size: 15px;
   border: none;
   border-radius: 8px;
   color: gray;
+  background-color: #efefef;
   outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
   &:hover {
     outline: ${({ disabled }) => (disabled ? "gray" : "2px solid #2a4cd4")};
@@ -87,65 +114,78 @@ const SignUpPage = () => {
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
-    console.log("보낼 데이터:", data);
-    try {
-      await axios.post("http://localhost:3000/auth/register", {
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      return await axios.post("http://localhost:3000/auth/register", {
         email: data.email,
         password: data.password,
         passwordCheck: data.checkPassword,
       });
+    },
+    onSuccess: () => {
+      alert("회원가입 성공!");
       navigate("/login");
-    } catch (error) {
+    },
+    onError: (error) => {
+      alert("회원가입 실패!");
       console.error("회원가입 실패:", error);
-    }
+    },
+  });
+
+  const onSubmit = (data) => {
+    mutation.mutate(data);
   };
 
   return (
     <SignUpContainer>
-      <Title>회원가입</Title>
-      <SignUpForm onSubmit={handleSubmit(onSubmit)}>
-        <Input
-          type="email"
-          placeholder="이메일을 입력해주세요!"
-          {...register("email")}
-          $isError={errors.email && touchedFields.email}
-        />
-        {errors.email && touchedFields.email && (
-          <ErrorMessage>{errors.email.message}</ErrorMessage>
-        )}
+      <Overlay />
+      <Content>
+        <Title>회원가입</Title>
+        <SignUpForm onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            type="email"
+            placeholder="이메일을 입력해주세요!"
+            {...register("email")}
+            $isError={errors.email && touchedFields.email}
+          />
+          {errors.email && touchedFields.email && (
+            <ErrorMessage>{errors.email.message}</ErrorMessage>
+          )}
 
-        <Input
-          type="password"
-          placeholder="비밀번호를 입력해주세요!"
-          {...register("password")}
-          $isError={errors.password && touchedFields.password}
-        />
-        {errors.password && touchedFields.password && (
-          <ErrorMessage>{errors.password.message}</ErrorMessage>
-        )}
+          <Input
+            type="password"
+            placeholder="비밀번호를 입력해주세요!"
+            {...register("password")}
+            $isError={errors.password && touchedFields.password}
+          />
+          {errors.password && touchedFields.password && (
+            <ErrorMessage>{errors.password.message}</ErrorMessage>
+          )}
 
-        <Input
-          type="password"
-          placeholder="비밀번호를 다시 입력해주세요!"
-          {...register("checkPassword")}
-          $isError={errors.checkPassword && touchedFields.checkPassword}
-        />
-        {errors.checkPassword && touchedFields.checkPassword && (
-          <ErrorMessage>{errors.checkPassword.message}</ErrorMessage>
-        )}
+          <Input
+            type="password"
+            placeholder="비밀번호를 다시 입력해주세요!"
+            {...register("checkPassword")}
+            $isError={errors.checkPassword && touchedFields.checkPassword}
+          />
+          {errors.checkPassword && touchedFields.checkPassword && (
+            <ErrorMessage>{errors.checkPassword.message}</ErrorMessage>
+          )}
 
-        <GenderSelect {...register("gender")}>
-          <option value="">성별을 선택해주세요!</option>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
-        </GenderSelect>
-        {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
+          <GenderSelect {...register("gender")}>
+            <option value="">성별을 선택해주세요!</option>
+            <option value="male">남성</option>
+            <option value="female">여성</option>
+          </GenderSelect>
+          {errors.gender && (
+            <ErrorMessage>{errors.gender.message}</ErrorMessage>
+          )}
 
-        <Button type="submit" disabled={!isValid}>
-          제출
-        </Button>
-      </SignUpForm>
+          <Button type="submit" disabled={!isValid || mutation.isLoading}>
+            {mutation.isLoading ? "처리 중..." : "제출"}
+          </Button>
+        </SignUpForm>
+      </Content>
     </SignUpContainer>
   );
 };

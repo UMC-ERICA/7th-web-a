@@ -9,7 +9,7 @@ const NavbarContainer = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 20px 20px;
-  background-color: #333;
+  background-color: #222;
   color: white;
 `;
 
@@ -71,7 +71,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Button to="/login" color={"#333"}>
+            <Button to="/login" color={"#222"}>
               로그인
             </Button>
             <Button to="/signup" color={"#FF285E"}>

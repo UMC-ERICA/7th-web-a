@@ -2,13 +2,14 @@ import React from "react";
 import styled from "styled-components";
 
 const StyledInput = styled.input`
-  width: 450px;
+  width: 350px;
   height: 30px;
   padding: 10px;
   margin: 10px 0;
-  font-size: 18px;
+  font-size: 15px;
   border: none;
   border-radius: 8px;
+  background-color: #efefef;
   outline: ${({ $isError }) => ($isError ? "2px solid red" : "none")};
   &:hover {
     outline: ${({ disabled }) => (disabled ? "gray" : "2px solid #2a4cd4")};
