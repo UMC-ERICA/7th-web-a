@@ -1,5 +1,5 @@
 import { useState, useEffect  } from "react";
-import useCustomFetch from "../hooks/useCustomFetch";
+import useCustomFetch,{ useGetData, useDebounce } from "../hooks/useCustomFetch";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
@@ -131,62 +131,55 @@ const FlexContainer = styled.div`
 `;
 
 
+
 function TodoList() {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [queryTitle, setQueryTitle] = useState("");
   const [todos, setTodos] = useState([]);
+  const debouncedQueryTitle = useDebounce(queryTitle, 300);
+
+  const { data, isLoading, isError, refetch } = useGetData(
+    "/todo",
+    debouncedQueryTitle ? `?title=${debouncedQueryTitle}` : "",
+    false
+  );
+
   const {
     postData: { mutate: postTodo, isLoading: isPosting, isError: postError },
-    getData: { mutate: fetchTodo, isLoading: isFetching, isError: fetchError },
     patchData: { mutate: updateTodo, isLoading: isUpdating, isError: updateError },
     deleteData: { mutate: removeTodo, isLoading: isDeleting, isError: deleteError },
   } = useCustomFetch("/todo");
 
-  const handleFetchTodos = (e) => {
-    // 이벤트 객체가 전달된 경우에만 preventDefault 호출
-    if (e && typeof e.preventDefault === "function") {
-      e.preventDefault();
+  useEffect(() => {
+    if (data && Array.isArray(data)) {
+      const firstItem = data[0]; // 첫 번째 항목에 접근
+      console.log("첫 번째 항목:", firstItem);
+  
+      setTodos(
+        firstItem.map((todo) => ({
+          ...todo,
+          isEditing: false,
+          editedTitle: todo.title,
+          editedContent: todo.content,
+        }))
+      );
     }
+  }, [data]);
+
+
   
-    const queryParams = queryTitle ? `?title=${queryTitle}` : "";
-  
-    fetchTodo(queryParams, {
-      onSuccess: (data) => {
-        console.log("조회 성공:", data);
-  
-        if (Array.isArray(data)) {
-          setTodos(
-            data.reverse().map((todo) => ({
-              ...todo,
-              isEditing: false,
-              editedTitle: todo.title,
-              editedContent: todo.content,
-            }))
-          );
-        } else {
-          console.error("조회된 데이터가 배열이 아닙니다:", data);
-          setTodos([]);
-        }
-      },
-      onError: (error) => {
-        console.error("조회 중 오류 발생:", error);
-      },
-    });
-  };
-  
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     postTodo(
-      { title, content }, // 전송할 데이터
+      { title, content },
       {
         onSuccess: (data) => {
           console.log("POST 성공:", data);
-          setTitle(""); // 입력 필드 초기화
+          setTitle("");
           setContent("");
-          handleFetchTodos(e);
         },
         
         onError: (error) => {
@@ -211,8 +204,7 @@ function TodoList() {
       {
         onSuccess: () => {
           console.log("체크박스 상태 변경 성공");
-  
-          // 상태 업데이트
+
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
               todo.id === id ? { ...todo, checked: updatedChecked } : todo
@@ -240,7 +232,6 @@ function TodoList() {
       onSuccess: () => {
         console.log(`삭제 성공: ID ${id}`);
         
-        // 삭제 후 UI에서 해당 Todo 제거
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
       },
       onError: (error) => {
@@ -252,7 +243,6 @@ function TodoList() {
 
   const handleSaveClick = (id) => {
     const todoToSave = todos.find((todo) => todo.id === id);
-  
     updateTodo(
       {
         id,
@@ -264,8 +254,7 @@ function TodoList() {
       {
         onSuccess: () => {
           console.log("수정 성공");
-  
-          // 상태 업데이트
+
           setTodos((prevTodos) =>
             prevTodos.map((todo) =>
               todo.id === id
@@ -284,12 +273,9 @@ function TodoList() {
         },
       }
     );
-  };
+  }
+    
   
-
-  useEffect(( ) => {
-    handleFetchTodos();
-  }, []); // 의존성 배열이 비어 있으므로 최초 마운트 시에만 실행
 
   return (
     <TodoContainer>
@@ -323,9 +309,6 @@ function TodoList() {
           value={queryTitle}
           onChange={(e) => setQueryTitle(e.target.value)}
         />
-        <Button onClick={handleFetchTodos} disabled={isFetching}>
-          조회
-        </Button>
       </TodoForm>
       <TodoListContainer>
 
@@ -394,6 +377,7 @@ function TodoList() {
       </TodoListContainer>
     </TodoContainer>
   );
+  
 }
 
 export default TodoList;

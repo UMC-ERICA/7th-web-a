@@ -1,5 +1,7 @@
 import axiosInstance from "../apis/axios-instance";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation,useQuery } from "@tanstack/react-query";
+import { useState, useEffect  } from "react";
+import debounce from "lodash/debounce";
 
 const useCustomFetch = (url) => {
 
@@ -17,25 +19,11 @@ const useCustomFetch = (url) => {
     mutationFn: (data) => axiosInstance.post(url, data),
     onSuccess: (data) => {
       console.log("POST 성공:", data);
-      // 추가 작업 가능 (예: UI 갱신)
     },
     onError: (error) => {
       console.error("POST 중 오류 발생:", error);
     },
   });
-  
-
-  const getData = useMutation({
-    mutationFn: (id) => axiosInstance.get(`${url}/${id}`),
-    onSuccess: () => {
-      console.log("조회 성공");
-    },
-    onError: (error) => {
-      console.error("조회 중 오류 발생:", error);
-    },
-  });
-
-
 
   const deleteData = useMutation({
     mutationFn: (id) => axiosInstance.delete(`${url}/${id}`),
@@ -53,11 +41,6 @@ const useCustomFetch = (url) => {
       isLoading: postData.isLoading,
       isError: postData.isError,
     },
-    getData: {
-      mutate: getData.mutate,
-      isLoading: getData.isLoading,
-      isError: getData.isError,
-    },
     patchData: {
       mutate: patchData.mutate,
       isLoading: patchData.isLoading,
@@ -70,5 +53,36 @@ const useCustomFetch = (url) => {
     },
   }
 };
+
+export const useGetData = (url, queryParam = "") => {
+  return useQuery({
+    queryKey: [url, queryParam],
+    queryFn: async () => {
+      const data = await axiosInstance.get(`${url}${queryParam}`);
+      console.log("서버 응답 전체:", data);
+
+      return data || [];
+    },
+})
+};
+
+export const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = debounce(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    handler(); // 실행
+
+    return () => {
+      handler.cancel();
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 
 export default useCustomFetch;
