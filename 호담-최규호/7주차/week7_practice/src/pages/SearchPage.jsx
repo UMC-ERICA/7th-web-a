@@ -50,7 +50,7 @@ const InputContainer = styled.div`
 `
 
 const MovieGridContainer = styled.div`
-  margin=top: 30px;
+  margin-top: 30px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 `
@@ -65,68 +65,79 @@ const ErrorText = styled.div`
 `
 
 const SearchPage = () => {
-  const [searchValue, setSearchValue] = useState('');
-  const [debouncedSearchValue, setDebouncedSearchValue] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const onChangeSearchValue = (event) => {
-    setSearchValue(event.target.value)
-  }
+  
+  // URL의 mq 파라미터로 초기 검색어 설정
+  const [searchValue, setSearchValue] = useState(searchParams.get('mq') || '');
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState(searchValue);
 
+  const onChangeSearchValue = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  // searchValue가 변경될 때마다 디바운스 적용
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchValue(searchValue);
     }, 1000);
 
-    return () => clearTimeout(handler); // 이전 타이머를 지워줌으로써 중복 요청 방지
+    return () => clearTimeout(handler);
   }, [searchValue]);
 
-  const [searchParams, setSearchParams] = useSearchParams({
-    mq: ''
-  })
-
-  const mq = searchParams.get('mq')
-
+  // 실제 검색 실행
   const handleSearchMovie = () => {
-    if (mq === debouncedSearchValue) return;  // mq와 디바운스된 검색어가 같으면 검색하지 않음
-    navigate(`/search?mq=${debouncedSearchValue}`);
+    if (!searchValue.trim()) return;
+    setSearchParams({ mq: searchValue });
   };
 
-  const handleSearchMovieWithKeyboard = (e) => {  // 엔터치면 입력되게 하는 함수
+  const handleSearchMovieWithKeyboard = (e) => {
     if (e.key === 'Enter') {
       handleSearchMovie();
     }
-  }
-  const url = `/search/movie?query=${debouncedSearchValue}&include_adult=false&language=ko-KR&page=1`;
+  };
 
-  const {data2: movies, isLoading, isError} = useRecycleState(url);
+  // URL에서 가져온 검색어로 API 호출
+  const url = searchParams.get('mq') 
+    ? `/search/movie?query=${searchParams.get('mq')}&include_adult=false&language=ko-KR&page=1`
+    : null;
+
+  const { data2: movies, isLoading, isError } = useRecycleState(url);
 
   if (isLoading) {
     return (
       <PageContainer>
+        <InputContainer>
+          <input
+            placeholder="영화 제목을 입력해주세요..."
+            value={searchValue}
+            onChange={onChangeSearchValue}
+            onKeyDown={handleSearchMovieWithKeyboard}
+          />
+          <button onClick={handleSearchMovie}>검색</button>
+        </InputContainer>
         <MovieGridContainer>
-          {isLoading ? (
-            <SkeletonList number={20}/>
-          ) : (
-            movies && movies.length > 0 && <MovieList movies={movies} />
-          )}
+          <SkeletonList number={20} />
         </MovieGridContainer>
       </PageContainer>
-    )
+    );
   }
 
   return (
     <PageContainer>
       <SearchContainer>
         <InputContainer>
-          <input placeholder="영화 제목을 입력해주세요..." value={searchValue} onChange={onChangeSearchValue}
-          onKeyDown = {handleSearchMovieWithKeyboard}  // 엔터치면 입력
+          <input
+            placeholder="영화 제목을 입력해주세요..."
+            value={searchValue}
+            onChange={onChangeSearchValue}
+            onKeyDown={handleSearchMovieWithKeyboard}
           />
-          <button onClick={handleSearchMovie}>검색</button>         
+          <button onClick={handleSearchMovie}>검색</button>
         </InputContainer>
-        {!isLoading && !isError && movies.length === 0 && searchValue && (
+        {!isLoading && !isError && movies?.length === 0 && searchParams.get('mq') && (
           <ErrorText>
-          {`해당하는 검색어 '${searchValue}'에 
-          해당하는 데이터가 없습니다.`}
+            {`해당하는 검색어 '${searchParams.get('mq')}'에\n해당하는 데이터가 없습니다.`}
           </ErrorText>
         )}
       </SearchContainer>
