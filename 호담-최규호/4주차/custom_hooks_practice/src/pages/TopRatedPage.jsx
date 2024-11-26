@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../apis/axios-instance.jsx";
+import axiosInstance from "../apis/AxiosInstance.jsx";
 import styled from "styled-components";
 import useRecycleState from "../hooks/useRecycleState.jsx";
 

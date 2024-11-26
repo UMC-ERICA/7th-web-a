@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axiosInstance from "../apis/axios-instance.jsx";
+import axiosInstance from "../apis/AxiosInstance.jsx";
 
 const useRecycleState = (url) => {
     const [data2, setData] = useState([]);
