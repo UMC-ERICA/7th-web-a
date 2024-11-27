@@ -1,21 +1,16 @@
 import { useState } from "react";
-import { TTodo } from "../types/todo";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { toggleTodo, deleteTodo, editTodo } from "../redux/todoSlice";
 import CheckBox from "./CheckBox";
 import styled from "styled-components";
+import { TTodo } from "../types/todo";
+import { useNavigate } from "react-router-dom";
 
-interface ITodoList {
-  todos: TTodo[];
-  onToggleTodo: (id: number, checked: boolean) => void;
-  onDeleteTodo: (id: number) => void;
-  onEditTodo: (id: number, title: string, content: string) => void;
-}
+function TodoList() {
+  const todos = useAppSelector((state) => state.todos);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-function TodoList({
-  todos,
-  onToggleTodo,
-  onDeleteTodo,
-  onEditTodo,
-}: ITodoList) {
   const [editId, setEditId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState<string>("");
   const [editContent, setEditContent] = useState<string>("");
@@ -28,16 +23,22 @@ function TodoList({
 
   const saveEdit = () => {
     if (editId !== null) {
-      onEditTodo(editId, editTitle, editContent);
+      dispatch(
+        editTodo({ id: editId, title: editTitle, content: editContent })
+      );
       setEditId(null);
       setEditTitle("");
       setEditContent("");
     }
   };
 
+  const handleNavigate = (id: number) => {
+    navigate(`/todo/${id}`);
+  };
+
   return (
     <StyledList>
-      {todos.map((todo) => (
+      {todos.map((todo: TTodo) => (
         <StyledListItem key={todo.id}>
           {editId === todo.id ? (
             <EditContainer>
@@ -64,15 +65,17 @@ function TodoList({
               <CheckBox
                 id={todo.id}
                 checked={todo.checked}
-                onChange={() => onToggleTodo(todo.id, !todo.checked)}
+                onChange={() =>
+                  dispatch(toggleTodo({ id: todo.id, checked: !todo.checked }))
+                }
               />
-              <Content>
+              <Content onClick={() => handleNavigate(todo.id)}>
                 <Title>{todo.title}</Title>
                 <Description>{todo.content}</Description>
               </Content>
               <ActionButtons>
                 <EditButton onClick={() => handleEdit(todo)}>수정</EditButton>
-                <DeleteButton onClick={() => onDeleteTodo(todo.id)}>
+                <DeleteButton onClick={() => dispatch(deleteTodo(todo.id))}>
                   삭제
                 </DeleteButton>
               </ActionButtons>
@@ -99,6 +102,11 @@ const StyledListItem = styled.li`
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 10px;
+
+  &:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
 `;
 
 const ContentContainer = styled.div`
@@ -118,6 +126,11 @@ const Content = styled.div`
   margin-left: 10px;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Title = styled.span`

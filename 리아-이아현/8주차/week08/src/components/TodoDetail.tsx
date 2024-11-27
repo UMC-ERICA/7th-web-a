@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { RootState } from "../redux/store";
+import { editTodo, deleteTodo } from "../redux/todoSlice";
 import styled from "styled-components";
-import { useTodoContext } from "../context/TodoContext";
-import Loading from "./Loading";
 
 function TodoDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { todos, onEditTodo, onDeleteTodo } = useTodoContext();
+  const todos = useAppSelector((state: RootState) => state.todos);
+  const dispatch = useAppDispatch();
+
   const [todo, setTodo] = useState<any>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
@@ -23,7 +26,7 @@ function TodoDetail() {
 
   const handleSave = () => {
     if (todo) {
-      onEditTodo(todo.id, editTitle, editContent);
+      dispatch(editTodo({ id: todo.id, title: editTitle, content: editContent }));
       alert("Todo 수정되었습니다!");
       navigate("/");
     }
@@ -31,14 +34,14 @@ function TodoDetail() {
 
   const handleDelete = () => {
     if (todo) {
-      onDeleteTodo(todo.id);
+      dispatch(deleteTodo(todo.id));
       alert("Todo 삭제되었습니다!");
       navigate("/");
     }
   };
 
   if (!todo) {
-    return <Loading/>;
+    return <p>Loading...</p>;
   }
 
   return (
