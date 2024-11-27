@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import CartItems from './CartItems'; // CartItems 컴포넌트 가져오기
+import CartItems from './CartItems';
 import { clearCart } from "../features/cart/cartSlice"
+import { openModal } from '../features/modal/modalSlice';
 
 const Container = styled.div`
   padding: 2rem;
@@ -20,7 +21,6 @@ const AlbumList = styled.ul`
 `;
 
 function CartContainer() {
-  // Redux 상태에서 필요한 데이터 가져오기
   const { cartItems, total } = useSelector((store) => store.cart);
   const dispatch = useDispatch();
 
@@ -43,7 +43,7 @@ function CartContainer() {
         ))}
       </AlbumList>
       <h1>총 금액: {Number(total).toLocaleString()}원</h1>
-      <button onClick={() => dispatch(clearCart())}>장바구니 비우기</button>
+      <button onClick={() => dispatch(openModal())}>장바구니 비우기</button>
     </Container>
   );
 }

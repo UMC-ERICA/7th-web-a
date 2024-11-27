@@ -11,6 +11,7 @@ const MoviesContainer = styled.div`
 `;
 
 const MoviesList = ({ movies }) => {
+    console.log('MovieList 호출됨');
     return (
         <MoviesContainer>
             {movies.map((movie) => (
