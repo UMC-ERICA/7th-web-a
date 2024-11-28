@@ -1,15 +1,18 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import CartItem from "./CartItem";
+import Modal from "./Modal";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import { calculateTotals, clearCart } from "../store/cartSlice";
+import { calculateTotals } from "../store/cartSlice";
+import { openModal } from "../store/modalSlice";
 
 const CartContainer: React.FC = () => {
   const dispatch = useDispatch();
   const { items, totalAmount, totalPrice } = useSelector(
     (state: RootState) => state.cart
   );
+  const { isOpen } = useSelector((state: RootState) => state.modal);
 
   useEffect(() => {
     dispatch(calculateTotals());
@@ -25,13 +28,14 @@ const CartContainer: React.FC = () => {
       </CartList>
       <Footer>
         <TotalInfo>
-          <ResetButton onClick={() => dispatch(clearCart())}>
+          <ResetButton onClick={() => dispatch(openModal())}>
             장바구니 초기화
           </ResetButton>
           <TotalPrice>총 가격: ₩{totalPrice.toLocaleString()}</TotalPrice>
           <TotalAmount>총 수량: {totalAmount}개</TotalAmount>
         </TotalInfo>
       </Footer>
+      {isOpen && <Modal />}
     </Container>
   );
 };
