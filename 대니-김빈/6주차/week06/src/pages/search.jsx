@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useSearchParams } from 'react-router-dom';
 import useCustomFetch from '../hooks/useCustomFetch';
 import MoviesList from '../components/MovieList';
 import SkeletonMovie from '../components/skeletonmovie';
@@ -56,17 +57,28 @@ const NoResultsMessage = styled.p`
 `;
 
 const SearchPage = () => {
-    const [query, setQuery] = useState('');
-    const [lastQuery, setLastQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const queryParam = searchParams.get('query') || '';  // URL의 'query' 파라미터를 가져옴
+    const [query, setQuery] = useState(queryParam);
+    const [lastQuery, setLastQuery] = useState(queryParam);
     const [searchUrl, setSearchUrl] = useState(null);
     const [skeletonCount, setSkeletonCount] = useState(5);
 
     const { data, isLoading, isError } = useCustomFetch(searchUrl);
 
+    // query 값이 변경되면 URL에 반영
+    useEffect(() => {
+        if (queryParam !== query) {
+            setQuery(queryParam);
+            setSearchUrl(`/search/movie?query=${encodeURIComponent(queryParam)}&include_adult=false&language=ko-KR&page=1`);
+        }
+    }, [queryParam]);
+
     const handleSearch = () => {
         if (query) {
             setLastQuery(query);
             setSkeletonCount(30);
+            setSearchParams({ query });  // URL에 쿼리 파라미터 설정
             setSearchUrl(`/search/movie?query=${encodeURIComponent(query)}&include_adult=false&language=ko-KR&page=1`);
         }
     };
@@ -99,7 +111,7 @@ const SearchPage = () => {
 
             {data && data.results && data.results.length > 0 && (
                 <MoviesList movies={data.results} />
-            )}
+            )}  
         </PageWrapper>
     );
 };
