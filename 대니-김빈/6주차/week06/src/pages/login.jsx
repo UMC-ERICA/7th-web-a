@@ -5,7 +5,7 @@ import { validateLogin } from "../utils/validate.js";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Input = styled.input`
   width: 530px;
