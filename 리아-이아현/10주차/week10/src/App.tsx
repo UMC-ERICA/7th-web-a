@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import RootLayout from "./layout/root-layout";
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage from "./pages/LoginPage";
+import SearchPage from "./pages/SearchPage";
+import MoviesPage from "./pages/MoviesPage";
+import NowPlayingPage from "./pages/NowPlayingPage";
+import PopularPage from "./pages/PopularPage";
+import TopRatedPage from "./pages/TopRatedPage";
+import UpComingPage from "./pages/UpComingPage";
+import MovieDetailPage from "./pages/MovieDetailPage";
+import { AuthProvider } from "./context/AuthProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-function App() {
-  const [count, setCount] = useState(0)
+const queryClient = new QueryClient();
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "search", element: <SearchPage /> },
+      { path: "login", element: <LoginPage /> },
+      { path: "signup", element: <SignUpPage /> },
+      { path: "movies", element: <MoviesPage /> },
+      { path: "movies/now-playing", element: <NowPlayingPage /> },
+      { path: "movies/popular", element: <PopularPage /> },
+      { path: "movies/top-rated", element: <TopRatedPage /> },
+      { path: "movies/up-coming", element: <UpComingPage /> },
+      { path: "movies/:movieId", element: <MovieDetailPage /> },
+    ],
+  },
+]);
+
+const App: React.FC = () => {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </AuthProvider>
+  );
+};
 
-export default App
+export default App;
